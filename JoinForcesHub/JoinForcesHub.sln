@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoinForcesHubAPI.Applicatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoinForcesHubAPI.Infrastructure", "src\External\JoinForcesHubAPI.Infrastructure\JoinForcesHubAPI.Infrastructure.csproj", "{F7650057-84FE-4B10-B1A1-DB9F90CDDFD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoinForcesHubAPI.Presentation", "src\External\JoinForcesHubAPI.Presentation\JoinForcesHubAPI.Presentation.csproj", "{8C6A2361-4175-4E33-AA13-741CC3AFC247}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{F7650057-84FE-4B10-B1A1-DB9F90CDDFD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7650057-84FE-4B10-B1A1-DB9F90CDDFD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7650057-84FE-4B10-B1A1-DB9F90CDDFD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C6A2361-4175-4E33-AA13-741CC3AFC247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C6A2361-4175-4E33-AA13-741CC3AFC247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C6A2361-4175-4E33-AA13-741CC3AFC247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C6A2361-4175-4E33-AA13-741CC3AFC247}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +51,7 @@ Global
 		{D249ABE7-57F1-4E73-B25E-80F40E341849} = {D5939A22-F614-4C6F-8C69-E55352AE8127}
 		{4755A796-6033-4A70-85FE-24A137A8B9A4} = {D5939A22-F614-4C6F-8C69-E55352AE8127}
 		{F7650057-84FE-4B10-B1A1-DB9F90CDDFD7} = {597D9238-5D22-4A0E-9453-05F853DF0271}
+		{8C6A2361-4175-4E33-AA13-741CC3AFC247} = {597D9238-5D22-4A0E-9453-05F853DF0271}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1701E603-B4AE-47E0-80C3-D04DD0AF5132}
