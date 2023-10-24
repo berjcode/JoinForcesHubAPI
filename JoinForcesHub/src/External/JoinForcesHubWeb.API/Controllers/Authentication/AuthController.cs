@@ -1,7 +1,60 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using JoinForcesHubWeb.API.Abstractions;
+using JoinForcesHubAPI.Application.Services.Authentication;
+using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 namespace JoinForcesHubWeb.API.Controllers.Authentication;
 
-public sealed class AuthController : ControllerBase
+
+public sealed class AuthController : ApiController
 {
+
+    private readonly IAuthenticationService _authenticationService;
+
+    public AuthController(IAuthenticationService authenticationService)
+    {
+        _authenticationService = authenticationService;
+    }
+
+
+    [HttpPost("[action]")]
+    public IActionResult UserRegister(RegisterRequest registerRequest)
+    {
+        var authResult = _authenticationService.Register(
+            registerRequest.FirstName,
+            registerRequest.LastName,
+            registerRequest.Email,
+            registerRequest.Password
+            );
+
+        var response = new AuthenticationResponse(
+            authResult.Id,
+            authResult.Firstname,
+            authResult.LastName,
+            authResult.Email,
+            authResult.Token
+            );
+
+        return Ok(response);
+    }
+
+    [HttpPost("[action]")]
+    public IActionResult UserLogin(LoginRequest loginRequest)
+    {
+        var authResult = _authenticationService.Login(
+            loginRequest.Email,
+            loginRequest.Password
+            );
+
+        var response = new AuthenticationResponse(
+            authResult.Id,
+            authResult.Firstname,
+            authResult.LastName,
+            authResult.Email,
+            authResult.Token
+            );
+
+        return Ok(response);
+    }
+
 }
