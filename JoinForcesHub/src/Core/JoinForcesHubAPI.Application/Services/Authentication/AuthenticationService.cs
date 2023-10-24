@@ -1,33 +1,61 @@
-﻿using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+﻿using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
+using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+using JoinForcesHub.Domain.Entities;
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 
 public class AuthenticationService : IAuthenticationService
 {
+    private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator)
+    public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator, IUserRepository userRepository)
     {
         _jwtTokenGenerator = jwtTokenGenerator;
+        _userRepository = userRepository;
     }
 
 
-    public AuthenticationResult Register(string firstName, string lastName, string email, string password)
+    public AuthenticationResult Register(string firstName, string surName, string email, string password)
     {
-        //Check User
+        if (_userRepository.GetUserByEmail(email) != null)
+        {
+            throw new Exception("User with given email already exists.");
+        }
 
-        Guid userId = Guid.NewGuid();
+        var user = new User
+        {
+            FirstName = firstName,
+            SurName = surName,
+            Email = email,
+            Password = password
+        };
 
-        var tokenRegister = _jwtTokenGenerator.GenerateToken(userId, firstName, lastName);
+        _userRepository.Add(user);
 
-        return new AuthenticationResult(Guid.NewGuid(),firstName, lastName, email, tokenRegister);
+        var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, firstName, surName);
+
+        return new AuthenticationResult(Guid.NewGuid(), firstName, surName, email, tokenRegister);
     }
 
-    public AuthenticationResult Login(string firstName, string password)
+    public AuthenticationResult Login(string email, string password)
     {
+        if (_userRepository.GetUserByEmail(email) is not User user)
+        {
+            throw new Exception("User with given email does not exist.");
+        }
+
+        if (user.Password != password)
+        {
+            throw new Exception("Invalid Password");
+        }
+
+        var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName);
+
+
         return new AuthenticationResult(
-            Guid.NewGuid(), "Abdullah", "lastName", "lastName", "token"
+            user.Id, user.FirstName, user.SurName, user.SurName, token
             );
-     
+
     }
 }

@@ -3,7 +3,7 @@
 public record AuthenticationResponse(
     Guid Id,
     string Firstname,
-    string LastName,
+    string SurName,
     string Email,
     string Token
     );

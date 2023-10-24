@@ -22,7 +22,7 @@ public sealed class AuthController : ApiController
     {
         var authResult = _authenticationService.Register(
             registerRequest.FirstName,
-            registerRequest.LastName,
+            registerRequest.SurName,
             registerRequest.Email,
             registerRequest.Password
             );
@@ -30,7 +30,7 @@ public sealed class AuthController : ApiController
         var response = new AuthenticationResponse(
             authResult.Id,
             authResult.Firstname,
-            authResult.LastName,
+            authResult.SurName,
             authResult.Email,
             authResult.Token
             );
@@ -49,7 +49,7 @@ public sealed class AuthController : ApiController
         var response = new AuthenticationResponse(
             authResult.Id,
             authResult.Firstname,
-            authResult.LastName,
+            authResult.SurName,
             authResult.Email,
             authResult.Token
             );

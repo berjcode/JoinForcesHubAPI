@@ -2,7 +2,7 @@
 
 public record RegisterRequest(
     string FirstName,
-    string LastName,
+    string SurName,
     string Email,
     string Password
     );

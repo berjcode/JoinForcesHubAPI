@@ -17,4 +17,8 @@
     <ProjectReference Include="..\JoinForcesHubAPI.Infrastructure\JoinForcesHubAPI.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>
