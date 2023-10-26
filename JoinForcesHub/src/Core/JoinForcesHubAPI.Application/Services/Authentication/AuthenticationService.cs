@@ -1,7 +1,7 @@
-﻿using JoinForcesHub.Domain.Entities;
-using JoinForcesHubAPI.Application.Utilities.Messages;
+﻿using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+using JoinForcesHub.Domain.Entities.User;
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 

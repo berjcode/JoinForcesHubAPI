@@ -1,4 +1,4 @@
-﻿using JoinForcesHub.Domain.Entities;
+﻿using JoinForcesHub.Domain.Entities.User;
 
 namespace JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 
