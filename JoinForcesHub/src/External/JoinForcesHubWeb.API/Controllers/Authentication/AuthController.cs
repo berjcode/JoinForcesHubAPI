@@ -1,13 +1,12 @@
 ﻿using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 using JoinForcesHubAPI.Application.Services.Authentication;
 using JoinForcesHubWeb.API.Abstractions;
-using JoinForcesHubWeb.API.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JoinForcesHubWeb.API.Controllers.Authentication;
 
 
-[ErrorHandlingFilterAttribute]
+
 public sealed class AuthController : ApiController
 {
 
