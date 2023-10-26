@@ -1,6 +1,7 @@
-﻿using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
+﻿using JoinForcesHub.Domain.Entities;
+using JoinForcesHubAPI.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
-using JoinForcesHub.Domain.Entities;
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 
@@ -20,7 +21,7 @@ public class AuthenticationService : IAuthenticationService
     {
         if (_userRepository.GetUserByEmail(email) != null)
         {
-            throw new Exception("User with given email already exists.");
+            throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
         }
 
         var user = new User
@@ -42,12 +43,12 @@ public class AuthenticationService : IAuthenticationService
     {
         if (_userRepository.GetUserByEmail(email) is not User user)
         {
-            throw new Exception("User with given email does not exist.");
+            throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
         }
 
         if (user.Password != password)
         {
-            throw new Exception("Invalid Password");
+            throw new Exception(ServiceExceptionMessages.InvalidPassword);
         }
 
         var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName);

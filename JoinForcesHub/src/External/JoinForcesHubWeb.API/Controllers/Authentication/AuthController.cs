@@ -1,7 +1,7 @@
-﻿using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
-using JoinForcesHubAPI.Application.Services.Authentication;
+﻿using Microsoft.AspNetCore.Mvc;
 using JoinForcesHubWeb.API.Abstractions;
-using Microsoft.AspNetCore.Mvc;
+using JoinForcesHubAPI.Application.Services.Authentication;
+using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 namespace JoinForcesHubWeb.API.Controllers.Authentication;
 

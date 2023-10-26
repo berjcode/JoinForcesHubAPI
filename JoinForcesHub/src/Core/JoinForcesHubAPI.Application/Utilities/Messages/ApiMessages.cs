@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting.Server;
-
-namespace JoinForcesHubWeb.API.Utilities.Messages;
+﻿namespace JoinForcesHubWeb.Application.Utilities.Messages;
 
 public static class ApiMessages
 {

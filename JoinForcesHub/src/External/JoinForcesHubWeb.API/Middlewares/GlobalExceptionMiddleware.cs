@@ -2,7 +2,7 @@
 using System.Net.Mime;
 using System.Text.Json;
 using JoinForcesHubWeb.API.Utilities;
-using JoinForcesHubWeb.API.Utilities.Messages;
+using JoinForcesHubWeb.Application.Utilities.Messages;
 
 namespace JoinForcesHubWeb.API.Middlewares;
 
