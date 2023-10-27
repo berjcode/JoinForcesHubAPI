@@ -4,6 +4,6 @@ namespace JoinForcesHub.Domain.Entities.Roles;
 
 public class Role : BaseEntity
 {
-    public string RoleName { get; set; }
-    public string Description { get; set; }
+    public string RoleName { get; private set; }
+    public string Description { get; private set; }
 }
