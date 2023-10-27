@@ -4,8 +4,8 @@ namespace JoinForcesHub.Domain.Entities.UserDetails;
 
 public class Advice : BaseEntity
 {
-    public Guid SenderUserId { get; set; } 
-    public Guid ReceiverUserId { get; set; } 
-    public string Content { get; set; }
-    public string HowDoYouKnow { get; set; }
+    public Guid SenderUserId { get; private set; }
+    public Guid ReceiverUserId { get; private set; }
+    public string Content { get; private set; }
+    public string HowDoYouKnow { get; private set; }
 }

@@ -2,13 +2,13 @@
 
 namespace JoinForcesHub.Domain.Entities.UserDetails;
 
-public class Project :BaseEntity
+public class Project : BaseEntity
 {
-    public Guid UserId { get; set; }
-    public string ProjectName { get; set; }
-    public string ProjectDescription { get; set; }
-    public string  ProjectUrl{ get; set; }
-    public string  ProjectGithubUrl{ get; set; }
-    public DateTime   StartDate{ get; set; }
-    public DateTime EndDate { get; set; }
+    public Guid UserId { get; private set; }
+    public string ProjectName { get; private set; }
+    public string ProjectDescription { get; private set; }
+    public string ProjectUrl { get; private set; }
+    public string ProjectGithubUrl { get; private set; }
+    public DateTime StartDate { get; private set; }
+    public DateTime EndDate { get; private set; }
 }

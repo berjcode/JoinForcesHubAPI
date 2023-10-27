@@ -2,7 +2,7 @@
 
 namespace JoinForcesHub.Domain.Entities.Messages;
 
-public class Room :BaseEntity
+public class Room : BaseEntity
 {
-    public string RoomName { get; set; }
+    public string RoomName { get; private set; }
 }
