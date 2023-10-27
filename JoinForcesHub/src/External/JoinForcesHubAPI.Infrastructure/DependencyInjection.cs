@@ -45,7 +45,7 @@ public static class DependencyInjection
             });
 
 
-        services.AddDbContext<JoinForcesHubDbContext>(options => options.UseSqlServer("Data Source=localhost;Initial Catalog=LyraeChatApp;Integrated Security=True;MultipleActiveResultSets=True"));
+        services.AddDbContext<JoinForcesHubDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("JoinForcesHubSqlServer")));
         return services;
     }
 }
