@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using JoinForcesHubAPI.Infrastructure.Services;
@@ -10,6 +11,7 @@ using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Infrastructure.Persistence.Repositories;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 
 namespace JoinForcesHubAPI.Infrastructure;
 
@@ -41,6 +43,9 @@ public static class DependencyInjection
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
             });
+
+
+        services.AddDbContext<JoinForcesHubDbContext>(options => options.UseSqlServer("Data Source=localhost;Initial Catalog=LyraeChatApp;Integrated Security=True;MultipleActiveResultSets=True"));
         return services;
     }
 }
