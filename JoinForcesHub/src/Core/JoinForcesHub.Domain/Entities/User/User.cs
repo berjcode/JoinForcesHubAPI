@@ -1,23 +1,25 @@
 ﻿using JoinForcesHub.Domain.Abstract;
+using JoinForcesHub.Domain.Entities.Roles;
 
 namespace JoinForcesHub.Domain.Entities.User;
 
 public class User : BaseEntity
 {
-    public string FirstName { get; private set; } = null!;
-    public string SurName { get; private set; } = null!;
-    public string UserName { get; private set; } = null!;
-    public string Email { get; private set; } = null!;
-    public string About { get; private set; }
-    public string Password { get; private set; }
-    public string PhotoPath { get; private set; }
-    public string GithubLink { get; private set; }
-    public string LinkedlnLink { get; private set; }
-    public string StackOverFlowLink { get; private set; }
-    public string Location { get; private set; }
-    public string EducationStatus { get; private set; }
-    public string JobStatus { get; private set; }
-    public bool IsProfileVisible { get; private set; } = false;
-    public string CoverPhoto { get; private set; }
-    public bool IsPremium { get; private set; } = false;
+    public string FirstName { get;  set; } = null!;
+    public string SurName { get;  set; } = null!;
+    public string UserName { get;  set; } = null!;
+    public string Email { get;  set; } = null!;
+    public string About { get;  set; }
+    public string Password { get;  set; }
+    public string PhotoPath { get;  set; }
+    public string GithubLink { get;  set; }
+    public string LinkedlnLink { get;  set; }
+    public string StackOverFlowLink { get;  set; }
+    public string Location { get;  set; }
+    public string EducationStatus { get;  set; }
+    public string JobStatus { get;  set; }
+    public bool IsProfileVisible { get;  set; } = false;
+    public string CoverPhoto { get;  set; }
+    public bool IsPremium { get;  set; } = false;
+    public ICollection<UserRole> UserRoles { get;  set; }
 }

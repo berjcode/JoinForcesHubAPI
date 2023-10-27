@@ -10,7 +10,6 @@
     <Folder Include="Persistence\EntityConfigurations\Advertisements\" />
     <Folder Include="Persistence\EntityConfigurations\Messages\" />
     <Folder Include="Persistence\EntityConfigurations\Teams\" />
-    <Folder Include="Persistence\EntityConfigurations\Users\" />
     <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 

@@ -4,8 +4,8 @@ namespace JoinForcesHub.Domain.Entities.Messages;
 
 public class Message : BaseEntity
 {
-    public string Content { get; private set; }
-    public Guid UserId { get; private set; }
-    public Guid RoomId { get; private set; }
-    public bool IsMessageVisible { get; private set; }
+    public string Content { get;  set; }
+    public Guid UserId { get;  set; }
+    public Guid RoomId { get;  set; }
+    public bool IsMessageVisible { get;  set; }
 }

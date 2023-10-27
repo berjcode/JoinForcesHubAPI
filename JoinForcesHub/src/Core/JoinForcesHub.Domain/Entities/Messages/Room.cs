@@ -4,5 +4,5 @@ namespace JoinForcesHub.Domain.Entities.Messages;
 
 public class Room : BaseEntity
 {
-    public string RoomName { get; private set; }
+    public string RoomName { get;  set; }
 }

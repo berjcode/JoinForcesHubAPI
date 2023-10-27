@@ -4,6 +4,6 @@ namespace JoinForcesHub.Domain.Entities.Messages;
 
 public class UserRoom : BaseEntity
 {
-    public Guid UserId { get; private set; }
-    public Guid RoomId { get; private set; }
+    public Guid UserId { get;  set; }
+    public Guid RoomId { get;  set; }
 }

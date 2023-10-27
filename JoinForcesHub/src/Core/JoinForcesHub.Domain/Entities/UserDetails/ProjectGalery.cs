@@ -4,6 +4,6 @@ namespace JoinForcesHub.Domain.Entities.UserDetails;
 
 public class ProjectGalery : BaseEntity
 {
-    public string PhotoPath { get; private set; }
-    public bool Priority { get; private set; }
+    public string PhotoPath { get;  set; }
+    public bool Priority { get;  set; }
 }

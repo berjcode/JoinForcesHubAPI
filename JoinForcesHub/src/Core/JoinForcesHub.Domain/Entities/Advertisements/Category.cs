@@ -2,6 +2,6 @@
 
 public class Category
 {
-    public string CategoryName { get; private set; }
-    public string Description { get; private set; }
+    public string CategoryName { get;  set; }
+    public string Description { get;  set; }
 }

@@ -4,10 +4,10 @@ namespace JoinForcesHub.Domain.Entities.UserDetails;
 
 public class Certificate : BaseEntity
 {
-    public Guid UserId { get; private set; }
-    public string CertificateName { get; private set; }
-    public string CertificateUrl { get; private set; }
-    public string CertificateType { get; private set; }
-    public DateTime StartDate { get; private set; }
-    public DateTime EndTime { get; private set; }
+    public Guid UserId { get;  set; }
+    public string CertificateName { get;  set; }
+    public string CertificateUrl { get;  set; }
+    public string CertificateType { get;  set; }
+    public DateTime StartDate { get;  set; }
+    public DateTime EndTime { get;  set; }
 }

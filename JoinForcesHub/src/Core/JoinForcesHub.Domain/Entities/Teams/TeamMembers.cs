@@ -4,8 +4,8 @@ namespace JoinForcesHub.Domain.Entities.Teams;
 
 public class TeamMembers : BaseEntity
 {
-    public Guid UserId { get; private set; }
-    public Guid TeamId { get; private set; }
-    public string RoleName { get; private set; }
-    public bool IsCertified { get; private set; }
+    public Guid UserId { get;  set; }
+    public Guid TeamId { get;  set; }
+    public string RoleName { get;  set; }
+    public bool IsCertified { get;  set; }
 }
