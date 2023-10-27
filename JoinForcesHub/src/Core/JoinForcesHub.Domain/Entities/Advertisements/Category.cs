@@ -1,6 +1,8 @@
-﻿namespace JoinForcesHub.Domain.Entities.Advertisements;
+﻿using JoinForcesHub.Domain.Abstract;
 
-public class Category
+namespace JoinForcesHub.Domain.Entities.Advertisements;
+
+public class Category :BaseEntity
 {
     public string CategoryName { get;  set; }
     public string Description { get;  set; }

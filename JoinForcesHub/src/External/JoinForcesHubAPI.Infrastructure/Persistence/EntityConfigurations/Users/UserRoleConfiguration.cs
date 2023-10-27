@@ -26,9 +26,10 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 
         // BaseEntitiy Configuration
         builder.Property(v => v.IsActive).IsRequired(true);
-        builder.Property(v => v.UpdatedDate).IsRequired(false);
-        builder.Property(v => v.UpdatedDate).IsRequired(false);
+        builder.Property(v => v.DeletedAt).IsRequired(false);
         builder.Property(v => v.IsDeleted).IsRequired(false);
+        builder.Property(v => v.UpdatedDate).IsRequired(false);
+        builder.Property(v => v.UpdatedDate).IsRequired(false);
         builder.Property(v => v.CreationDate).IsRequired(true);
         builder.Property(v => v.CreatedByUserName).IsRequired(true);
         builder.Property(v => v.UpdatedByUserName).IsRequired(false);
