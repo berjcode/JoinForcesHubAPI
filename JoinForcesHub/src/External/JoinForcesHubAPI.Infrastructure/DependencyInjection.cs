@@ -12,6 +12,8 @@ using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
 using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
+using JoinForcesHubAPI.Infrastructure.Mapping;
+using JoinForcesHubAPI.Application.Utilities.Messages;
 
 namespace JoinForcesHubAPI.Infrastructure;
 
@@ -30,8 +32,7 @@ public static class DependencyInjection
         //Services
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-
-
+        //Jwt
         services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -45,8 +46,10 @@ public static class DependencyInjection
                     Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
             });
 
-
-        services.AddDbContext<JoinForcesHubDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("JoinForcesHubSqlServer")));
+        //AutoMapper
+        services.AddAutoMapper(typeof(MappingProfile));
+        //Context
+        services.AddDbContext<JoinForcesHubDbContext>(options => options.UseSqlServer(configuration.GetConnectionString(AppSettingExpression.JoinForcesHubSqlServerConnection)));
         return services;
     }
 }
