@@ -2,9 +2,7 @@
 
 namespace JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 
-public interface IUserRepository
+public interface IUserQueryRepository
 {
-    void Add(User user);
-    User GetUserByEmail(string email); 
-
+    Task<User> GetUserByEmail(string email);
 }

@@ -7,11 +7,11 @@ using JoinForcesHubAPI.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using JoinForcesHubAPI.Infrastructure.Authentication;
+using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
-using JoinForcesHubAPI.Infrastructure.Persistence.Repositories;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
-using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
+using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
 
 namespace JoinForcesHubAPI.Infrastructure;
 
@@ -25,7 +25,8 @@ public static class DependencyInjection
 
         services.AddSingleton(Options.Create(jwtSettings));
         //Repository
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserQueryRepository, UserQueryRepository>();
+        services.AddScoped<IUserCommandRepository, UserCommandRepository>();
         //Services
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();

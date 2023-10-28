@@ -19,9 +19,9 @@ public sealed class AuthController : ApiController
 
 
     [HttpPost("[action]")]
-    public IActionResult UserRegister(RegisterRequest registerRequest)
+    public async Task<IActionResult> UserRegister(RegisterRequest registerRequest)
     {
-        var authResult = _authenticationService.Register(
+        var authResult = await _authenticationService.Register(
             registerRequest.FirstName,
             registerRequest.SurName,
             registerRequest.Email,
@@ -40,9 +40,9 @@ public sealed class AuthController : ApiController
     }
 
     [HttpPost("[action]")]
-    public IActionResult UserLogin(LoginRequest loginRequest)
+    public async Task<IActionResult> UserLogin(LoginRequest loginRequest)
     {
-        var authResult = _authenticationService.Login(
+        var authResult = await _authenticationService.Login(
             loginRequest.Email,
             loginRequest.Password
             );

@@ -1,25 +1,32 @@
-﻿using JoinForcesHubAPI.Application.Utilities.Messages;
+﻿using JoinForcesHub.Domain.Entities.User;
+using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
-using JoinForcesHub.Domain.Entities.User;
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IUserQueryRepository _userQueryRepository;
+    private readonly IUserCommandRepository _userCommandRepository;
 
-    public AuthenticationService(IJwtTokenGenerator jwtTokenGenerator, IUserRepository userRepository)
+    public AuthenticationService(
+        IJwtTokenGenerator jwtTokenGenerator,
+        IUserQueryRepository userQueryRepository,
+        IUserCommandRepository userCommandRepository
+        )
     {
+
         _jwtTokenGenerator = jwtTokenGenerator;
-        _userRepository = userRepository;
+        _userQueryRepository = userQueryRepository;
+        _userCommandRepository = userCommandRepository;
     }
 
 
-    public AuthenticationResult Register(string firstName, string surName, string email, string password)
+    public async Task<AuthenticationResult> Register(string firstName, string surName, string email, string password)
     {
-        if (_userRepository.GetUserByEmail(email) != null)
+        if (await _userQueryRepository.GetUserByEmail(email) != null)
         {
             throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
         }
@@ -32,16 +39,16 @@ public class AuthenticationService : IAuthenticationService
             Password = password
         };
 
-        _userRepository.Add(user);
+       await _userCommandRepository.AddAsync(user);
 
         var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, firstName, surName);
 
         return new AuthenticationResult(Guid.NewGuid(), firstName, surName, email, tokenRegister);
     }
 
-    public AuthenticationResult Login(string email, string password)
+    public async Task<AuthenticationResult> Login(string email, string password)
     {
-        if (_userRepository.GetUserByEmail(email) is not User user)
+        if (await _userQueryRepository.GetUserByEmail(email) is not User user)
         {
             throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
         }
