@@ -1,4 +1,4 @@
-﻿namespace JoinForcesHubAPI.Application.Dtos.Users;
+﻿namespace JoinForcesHubAPI.Application.Contracts.Users;
 
 public record UserCreateDto(
     string FirstName,

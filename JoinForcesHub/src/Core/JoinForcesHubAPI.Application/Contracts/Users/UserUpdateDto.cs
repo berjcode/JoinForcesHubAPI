@@ -1,7 +1,8 @@
-﻿namespace JoinForcesHubAPI.Application.Dtos.Users;
+﻿namespace JoinForcesHubAPI.Application.Contracts.Users;
 
-public record UserListDto(
-     Guid Id,
+
+public record UserUpdateDto(
+    Guid Id,
     string FirstName,
     string SurName,
     string UserName,

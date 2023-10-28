@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using JoinForcesHub.Domain.Entities.User;
-using JoinForcesHubAPI.Application.Dtos.Users;
+using JoinForcesHubAPI.Application.Contracts.Users;
 
 namespace JoinForcesHubAPI.Infrastructure.Mapping;
 

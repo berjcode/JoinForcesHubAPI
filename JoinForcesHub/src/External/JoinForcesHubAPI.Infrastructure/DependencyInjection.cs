@@ -3,17 +3,17 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using JoinForcesHubAPI.Infrastructure.Mapping;
 using JoinForcesHubAPI.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using JoinForcesHubAPI.Infrastructure.Authentication;
+using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
 using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
-using JoinForcesHubAPI.Infrastructure.Mapping;
-using JoinForcesHubAPI.Application.Utilities.Messages;
 
 namespace JoinForcesHubAPI.Infrastructure;
 
