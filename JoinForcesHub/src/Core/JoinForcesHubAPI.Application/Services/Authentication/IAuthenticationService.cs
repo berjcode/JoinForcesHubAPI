@@ -1,10 +1,10 @@
-﻿using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
-using JoinForcesHubAPI.Application.Contracts.Users;
+﻿using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
+using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 
 public  interface IAuthenticationService
 {
-    Task<AuthenticationResult> Login(string firstName, string password);
-    Task<AuthenticationResult> Register(RegisterRequest registerRequest);
+    Task<ResponseDto<AuthenticationResult>> Login(LoginRequest loginRequest);
+    Task<ResponseDto<AuthenticationResult>> Register(RegisterRequest registerRequest);
 }

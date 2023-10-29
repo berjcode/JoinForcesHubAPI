@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using JoinForcesHub.Domain.Entities.User;
+using JoinForcesHubAPI.Application.Enums;
 using JoinForcesHubAPI.Application.Utilities.Messages;
+using JoinForcesHubWeb.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
@@ -28,7 +31,7 @@ public class AuthenticationService : IAuthenticationService
     }
 
 
-    public async Task<AuthenticationResult> Register(RegisterRequest registerRequest)
+    public async Task<ResponseDto<AuthenticationResultDto>> Register(RegisterRequest registerRequest)
     {
         var user = _mapper.Map<User>(registerRequest);
 
@@ -41,16 +44,17 @@ public class AuthenticationService : IAuthenticationService
         roles.Add(AppSettingExpression.MemberRegisterExpression);
 
         var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister);
 
-        return new AuthenticationResult(Guid.NewGuid(), user.FirstName, user.SurName, user.Email, tokenRegister);
+        return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
     }
 
-    public async Task<AuthenticationResult> Login(string email, string password)
+    public async Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest)
     {
-        if (await _userQueryRepository.GetUserByEmail(email) is not User user)
+        if (await _userQueryRepository.GetUserByEmail(loginRequest.Email) is not User user)
             throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
 
-        if (user.Password != password)
+        if (user.Password != loginRequest.Password)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
         //
@@ -59,7 +63,8 @@ public class AuthenticationService : IAuthenticationService
         //
 
         var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token);
 
-        return new AuthenticationResult(user.Id, user.FirstName, user.SurName, user.SurName, token);
+        return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);
     }
 }

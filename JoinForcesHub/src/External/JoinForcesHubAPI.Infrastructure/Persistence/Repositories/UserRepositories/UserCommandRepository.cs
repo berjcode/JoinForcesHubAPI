@@ -28,7 +28,7 @@ public sealed class UserCommandRepository : IUserCommandRepository
 
     public async Task AddRangeAsync(IEnumerable<User> user, CancellationToken cancellationToken)
     {
-        await _context.UserRoles.AddRangeAsync(user, cancellationToken);
+        await _context.Users.AddRangeAsync(user, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
