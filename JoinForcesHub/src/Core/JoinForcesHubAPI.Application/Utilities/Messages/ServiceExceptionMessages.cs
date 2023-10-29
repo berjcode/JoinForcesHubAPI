@@ -7,3 +7,4 @@ public static class ServiceExceptionMessages
     public static string UserAlreadyRegistered = "This username is already registered.";
     public static string UserWithGivenEmailNotExist = "User with given email does not exist";
 
+}
