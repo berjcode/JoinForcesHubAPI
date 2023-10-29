@@ -22,4 +22,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ControllerTests\Auth\Commands\" />
+    <Folder Include="ControllerTests\Auth\Queries\" />
+    <Folder Include="ControllerTests\" />
+  </ItemGroup>
+
 </Project>

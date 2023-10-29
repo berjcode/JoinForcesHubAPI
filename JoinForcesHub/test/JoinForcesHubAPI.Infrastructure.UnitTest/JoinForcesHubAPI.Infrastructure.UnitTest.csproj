@@ -22,4 +22,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="RepositoriesTests\User\Commands\" />
+    <Folder Include="RepositoriesTests\User\Queries\" />
+  </ItemGroup>
+
 </Project>

@@ -22,4 +22,13 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ServiceTests\AuthService\Commands\" />
+    <Folder Include="ServiceTests\AuthService\Queries\" />
+    <Folder Include="ServiceTests\RoleService\Commands\" />
+    <Folder Include="ServiceTests\RoleService\Queries\" />
+    <Folder Include="ServiceTests\UserRoleService\Commands\" />
+    <Folder Include="ServiceTests\UserRoleService\Queries\" />
+  </ItemGroup>
+
 </Project>
