@@ -37,6 +37,12 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         if (await _userQueryRepository.GetUserByEmail(user.Email) != null)
             throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
 
+        if (IsExistsRegisterForUserName(registerRequest.UserName) == true)
+            throw new Exception(ServiceExceptionMessages.UserAlreadyRegistered);
+
+
+        user.CreationDate = DateTime.UtcNow;
+        user.CreatedByUserName = user.UserName;
         await _userCommandRepository.AddAsync(user);
 
         List<string> roles = new List<string>();
@@ -50,10 +56,12 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
     public async Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest)
     {
-        if (await _userQueryRepository.GetUserByEmail(loginRequest.Email) is not User user)
-            throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
+        var checkEmailByUser = await _userQueryRepository.GetUserByEmail(loginRequest.Email);
 
-        if (user.Password != loginRequest.Password)
+        if (checkEmailByUser == null)
+            throw new Exception(ServiceExceptionMessages.ThisUserNotRegister);
+
+        if (checkEmailByUser.Password != loginRequest.Password)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
         //
@@ -61,9 +69,21 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         roles.Add("Üye");
         //
 
-        var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token);
+        var token = _jwtTokenGenerator.GenerateToken(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, roles);
+        var authResult = new AuthenticationResultDto(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, checkEmailByUser.Email, token);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);
     }
+
+    #region HelperMethods
+    //Private 
+    private bool IsExistsRegisterForUserName(string userName)
+    {
+        var result = _userQueryRepository.GetWhere(x => x.UserName == userName && x.IsDeleted == false).FirstOrDefault();
+        if (result != null)
+            return true;
+
+        return false;
+    }
+    #endregion
 }
