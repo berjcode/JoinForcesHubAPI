@@ -3,6 +3,18 @@
 public record RegisterRequest(
     string FirstName,
     string SurName,
+    string UserName,
     string Email,
-    string Password
+    string About,
+    string Password,
+    string PhotoPath,
+    string GithubLink,
+    string LinkedlnLink,
+    string StackOverFlowLink,
+    string Location,
+    string EducationStatus,
+    string JobStatus,
+    bool IsProfileVisible,
+    string CoverPhoto,
+    bool IsPremium
     );
