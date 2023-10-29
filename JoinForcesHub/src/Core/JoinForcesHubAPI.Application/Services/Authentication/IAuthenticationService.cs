@@ -5,6 +5,6 @@ namespace JoinForcesHubAPI.Application.Services.Authentication;
 
 public  interface IAuthenticationService
 {
-    Task<ResponseDto<AuthenticationResult>> Login(LoginRequest loginRequest);
-    Task<ResponseDto<AuthenticationResult>> Register(RegisterRequest registerRequest);
+    Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest);
+    Task<ResponseDto<AuthenticationResultDto>> Register(RegisterRequest registerRequest);
 }

@@ -4,7 +4,7 @@ using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositorie
 
 namespace JoinForcesHubAPI.Infrastructure.Persistence.Repositories.RoleRepositories;
 
-public class RoleCommandRepository : IRoleCommandRepository
+public class RoleCommandRepository : IRoleCommandRepository 
 {
     private readonly JoinForcesHubDbContext _context;
 

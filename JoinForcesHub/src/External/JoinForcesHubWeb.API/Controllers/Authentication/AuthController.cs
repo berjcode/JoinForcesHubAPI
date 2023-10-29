@@ -5,8 +5,6 @@ using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 namespace JoinForcesHubWeb.API.Controllers.Authentication;
 
-
-
 public sealed class AuthController : ApiController
 {
 
@@ -30,7 +28,6 @@ public sealed class AuthController : ApiController
     public async Task<IActionResult> UserLogin(LoginRequest loginRequest)
     {
         var response = await _authenticationService.Login(loginRequest);
-
 
         return   CreateActionResultInstance(response);
     }

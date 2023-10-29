@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Application.Enums;
+using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
@@ -10,9 +11,9 @@ using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositorie
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 
-public class AuthenticationService : IAuthenticationService
+public class AuthenticationService : BaseService<User>, IAuthenticationService
 {
-    private readonly IMapper _mapper;
+
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserCommandRepository _userCommandRepository;
@@ -21,10 +22,8 @@ public class AuthenticationService : IAuthenticationService
         IMapper mapper,
         IJwtTokenGenerator jwtTokenGenerator,
         IUserQueryRepository userQueryRepository,
-        IUserCommandRepository userCommandRepository)
+        IUserCommandRepository userCommandRepository) : base(mapper)
     {
-
-        _mapper = mapper;
         _jwtTokenGenerator = jwtTokenGenerator;
         _userQueryRepository = userQueryRepository;
         _userCommandRepository = userCommandRepository;
