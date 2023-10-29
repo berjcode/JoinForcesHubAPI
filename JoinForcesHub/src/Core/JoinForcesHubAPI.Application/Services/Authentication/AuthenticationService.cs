@@ -2,8 +2,8 @@
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
-using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
 
 namespace JoinForcesHubAPI.Application.Services.Authentication;
 
@@ -34,10 +34,13 @@ public class AuthenticationService : IAuthenticationService
 
         if (await _userQueryRepository.GetUserByEmail(user.Email) != null)
             throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
-       
+
         await _userCommandRepository.AddAsync(user);
 
-        var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName);
+        List<string> roles = new List<string>();
+        roles.Add(AppSettingExpression.MemberRegisterExpression);
+
+        var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
 
         return new AuthenticationResult(Guid.NewGuid(), user.FirstName, user.SurName, user.Email, tokenRegister);
     }
@@ -50,7 +53,12 @@ public class AuthenticationService : IAuthenticationService
         if (user.Password != password)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
-        var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName);
+        //
+        List<string> roles = new List<string>();
+        roles.Add("Üye");
+        //
+
+        var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
 
         return new AuthenticationResult(user.Id, user.FirstName, user.SurName, user.SurName, token);
     }

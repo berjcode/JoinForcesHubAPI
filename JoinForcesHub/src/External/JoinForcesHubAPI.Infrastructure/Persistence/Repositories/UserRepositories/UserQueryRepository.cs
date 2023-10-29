@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
-using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
 
 namespace JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
 

@@ -9,8 +9,6 @@
   <ItemGroup>
     <Folder Include="Abstractions\" />
     <Folder Include="Behaviors\" />
-    <Folder Include="User\Commands\" />
-    <Folder Include="User\Queries\" />
   </ItemGroup>
 
   <ItemGroup>

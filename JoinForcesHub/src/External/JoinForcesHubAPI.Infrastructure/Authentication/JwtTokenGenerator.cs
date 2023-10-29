@@ -18,7 +18,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtSettings = jwtSettings.Value;
     }
 
-    public string GenerateToken(Guid userId, string firstName, string surName)
+    public string GenerateToken(Guid userId, string firstName, string surName, List<string> roles)
     {
 
         var signingCredentials = new SigningCredentials(
@@ -30,7 +30,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator
            new Claim(JwtRegisteredClaimNames.Sub,userId.ToString()),
            new Claim(JwtRegisteredClaimNames.GivenName,firstName),
            new Claim(JwtRegisteredClaimNames.FamilyName,surName),
-           new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+           new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+           new Claim(ClaimTypes.Role,string.Join(",", roles))
        };
 
         var securityToken = new JwtSecurityToken(

@@ -1,6 +1,7 @@
 ﻿using JoinForcesHub.Domain.Entities.User;
+using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
-using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
 
 namespace JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
 
@@ -25,20 +26,37 @@ public sealed class UserCommandRepository : IUserCommandRepository
         return false;
     }
 
-
-
-    public Task<bool> HardDeleteByIdAsync(Guid id)
+    public async Task AddRangeAsync(IEnumerable<User> user, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await _context.UserRoles.AddRangeAsync(user, cancellationToken);
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<bool> SoftDeleteByIdAsync(Guid id)
+    public void Remove(User user)
     {
-        throw new NotImplementedException();
+        _context.Users.Remove(user);
+
+        _context.SaveChanges();
     }
 
-    public Task<User> UpdateAsync(User user)
+
+    public void RemoveRange(IEnumerable<User> user)
     {
-        throw new NotImplementedException();
+        _context.Users.RemoveRange(user);
+
+        _context.SaveChanges();
+    }
+
+    public void Update(User user)
+    {
+        _context.Users.Update(user);
+        _context.SaveChanges();
+    }
+
+    public void UpdateRange(IEnumerable<User> user)
+    {
+        _context.Users.UpdateRange(user);
+        _context.SaveChanges();
     }
 }

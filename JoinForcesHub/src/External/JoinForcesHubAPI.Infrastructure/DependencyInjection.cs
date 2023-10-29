@@ -11,9 +11,9 @@ using JoinForcesHubAPI.Infrastructure.Authentication;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
-using JoinForcesHubAPI.Application.Common.Interfaces.Persistance;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
 using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
 
 namespace JoinForcesHubAPI.Infrastructure;
 
