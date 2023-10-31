@@ -7,7 +7,7 @@ public interface IRoleQueryRepository
 {
     Task<Role> GetFirst(bool isTracking = true);
     IQueryable<Role> GetAll(bool isTracking = true);
-    Task<int> Count(Expression<Func<Role, bool>> expression);
+    Task<int> CountAsync(Expression<Func<Role, bool>> expression);
     Task<Role> GetFirstExpression(Expression<Func<Role, bool>> expression, bool isTracking = true);
     IQueryable<Role> GetWhere(Expression<Func<Role, bool>> expression, bool isTracking = true);
 }

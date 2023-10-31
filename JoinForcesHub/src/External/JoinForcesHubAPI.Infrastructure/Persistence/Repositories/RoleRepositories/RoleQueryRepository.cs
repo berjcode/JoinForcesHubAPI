@@ -20,7 +20,7 @@ public class RoleQueryRepository : IRoleQueryRepository
         _context = context;
     }
 
-    public async Task<int> Count(Expression<Func<Role, bool>> expression)
+    public async Task<int> CountAsync(Expression<Func<Role, bool>> expression)
     {
         return await _context.Roles.CountAsync(expression);
     }

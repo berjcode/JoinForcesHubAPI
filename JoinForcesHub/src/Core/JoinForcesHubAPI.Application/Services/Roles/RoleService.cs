@@ -27,7 +27,7 @@ public class RoleService : BaseService<Role>, IRoleService
     public async Task<ResponseDto<bool>> CreateRoleAsync(RoleCreateDto roleCreateDto, CancellationToken cancellationToken)
     {
         var role = _mapper.Map<Role>(roleCreateDto);
-        var checkRole = await _queryRepository.Count(x => x.RoleName == roleCreateDto.RoleName && x.IsDeleted == false);
+        var checkRole = await _queryRepository.CountAsync(x => x.RoleName == roleCreateDto.RoleName && x.IsDeleted == false);
 
         if (checkRole > 0)
             throw new Exception(ServiceExceptionMessages.RoleAlreadyRegistered);
@@ -40,9 +40,11 @@ public class RoleService : BaseService<Role>, IRoleService
         return ResponseDto<bool>.Success(true, 201, ApiMessages.RegisterSuccess);
     }
 
-    public Task<ResponseDto<int>> CountRoleAsync()
+    public async Task<ResponseDto<int>> CountRoleAsync()
     {
-        throw new NotImplementedException();
+        var result = await _queryRepository.CountAsync(x => x.IsDeleted == false && x.IsActive == true);
+
+        return ResponseDto<int>.Success(result, 200);
     }
 
     public Task<ResponseDto<RoleListDto>> GetAllByDeletedAsync()

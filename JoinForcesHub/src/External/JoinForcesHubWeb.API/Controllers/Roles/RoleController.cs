@@ -1,7 +1,7 @@
-﻿using JoinForcesHubAPI.Application.Contracts.Roles;
-using JoinForcesHubAPI.Application.Services.Roles;
+﻿using Microsoft.AspNetCore.Mvc;
 using JoinForcesHubWeb.API.Abstractions;
-using Microsoft.AspNetCore.Mvc;
+using JoinForcesHubAPI.Application.Services.Roles;
+using JoinForcesHubAPI.Application.Contracts.Roles;
 
 namespace JoinForcesHubWeb.API.Controllers.Roles
 {
@@ -14,7 +14,7 @@ namespace JoinForcesHubWeb.API.Controllers.Roles
             _roleService = roleService;
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
         public async Task<IActionResult> CreateRole(RoleCreateDto roleCreateDto, CancellationToken cancellationToken)
         {
             var response = await _roleService.CreateRoleAsync(roleCreateDto, cancellationToken);
