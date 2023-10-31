@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.User;
-using JoinForcesHubAPI.Application.Enums;
 using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;

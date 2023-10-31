@@ -1,4 +1,4 @@
-﻿namespace JoinForcesHubAPI.Application.Enums;
+﻿namespace JoinForcesHubAPI.Domain.Enums;
 
 public enum ApiStatusCode
 {

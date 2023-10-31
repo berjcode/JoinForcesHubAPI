@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Contracts.Roles;
@@ -37,14 +38,14 @@ public class RoleService : BaseService<Role>, IRoleService
 
         await _commandRepository.AddAsync(role, cancellationToken);
 
-        return ResponseDto<bool>.Success(true, 201, ApiMessages.RegisterSuccess);
+        return ResponseDto<bool>.Success(true, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
     }
 
     public async Task<ResponseDto<int>> CountRoleAsync()
     {
         var result = await _queryRepository.CountAsync(x => x.IsDeleted == false && x.IsActive == true);
 
-        return ResponseDto<int>.Success(result, 200);
+        return ResponseDto<int>.Success(result, (int)ApiStatusCode.Success);
     }
 
     public Task<ResponseDto<RoleListDto>> GetAllByDeletedAsync()
