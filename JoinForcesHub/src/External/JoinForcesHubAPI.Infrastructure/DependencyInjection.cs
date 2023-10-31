@@ -14,6 +14,9 @@ using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
 using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
+using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.RoleRepositories;
+using JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRoleRepositories;
 
 namespace JoinForcesHubAPI.Infrastructure;
 
@@ -27,8 +30,12 @@ public static class DependencyInjection
 
         services.AddSingleton(Options.Create(jwtSettings));
         //Repository
+        services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
         services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         services.AddScoped<IUserCommandRepository, UserCommandRepository>();
+        services.AddScoped<IRoleCommandRepository, RoleCommandRepository>();
+        services.AddScoped<IUserRoleQueryRepository, UserRoleQueryRepository>();
+        services.AddScoped<IUserRoleCommandRepository, UserRoleCommandRepository>();
         //Services
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();

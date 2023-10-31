@@ -20,9 +20,9 @@ public class RoleQueryRepository : IRoleQueryRepository
         _context = context;
     }
 
-    public int Count(Expression<Func<Role, bool>> expression)
+    public async Task<int> Count(Expression<Func<Role, bool>> expression)
     {
-        return _context.Roles.Count(expression);
+        return await _context.Roles.CountAsync(expression);
     }
 
     public IQueryable<Role> GetAll(bool isTracking = true)
@@ -38,6 +38,18 @@ public class RoleQueryRepository : IRoleQueryRepository
     public async Task<Role> GetFirst(bool isTracking = true)
     {
         return await GetFirstCompiled(_context, isTracking);
+    }
+
+    public Task<Role> GetFirstExpression(Expression<Func<Role, bool>> expression, bool isTracking = true)
+    {
+        if (isTracking)
+        {
+            return _context.Roles.FirstOrDefaultAsync(expression);
+        }
+        else
+        {
+            return _context.Roles.AsNoTracking().FirstOrDefaultAsync(expression);
+        }
     }
 
     public IQueryable<Role> GetWhere(Expression<Func<Role, bool>> expression, bool isTracking = true)
