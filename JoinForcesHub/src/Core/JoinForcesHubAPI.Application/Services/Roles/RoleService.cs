@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Abstractions;
@@ -12,22 +13,35 @@ namespace JoinForcesHubAPI.Application.Services.Roles;
 
 public class RoleService : BaseService<Role>, IRoleService
 {
+    private readonly IValidator<Role> _validator;
     private readonly IRoleQueryRepository _queryRepository;
     private readonly IRoleCommandRepository _commandRepository;
     public RoleService(
         IMapper mapper,
         IRoleQueryRepository queryRepository,
         IRoleCommandRepository commandRepository
-        )
+,
+        IValidator<Role> validator)
         : base(mapper)
     {
         _queryRepository = queryRepository;
         _commandRepository = commandRepository;
+        _validator = validator;
     }
 
     public async Task<ResponseDto<bool>> CreateRoleAsync(RoleCreateDto roleCreateDto, CancellationToken cancellationToken)
     {
         var role = _mapper.Map<Role>(roleCreateDto);
+
+        var validationResult = _validator.Validate(role);
+
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors;
+            foreach (var error in errors)
+                return ResponseDto<bool>.Fail(error.ErrorMessage, (int)ApiStatusCode.BadRequest);
+        }
+
         var checkRole = await _queryRepository.CountAsync(x => x.RoleName == roleCreateDto.RoleName && x.IsDeleted == false);
 
         if (checkRole > 0)
