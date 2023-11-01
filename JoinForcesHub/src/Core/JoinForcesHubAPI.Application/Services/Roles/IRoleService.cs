@@ -9,7 +9,7 @@ public interface IRoleService
     Task<ResponseDto<int>> CountRoleAsync();
     Task<ResponseDto<RoleDto>> GetAsync(int roleId);
     Task<ResponseDto<RoleListDto>> GetAllByDeletedAsync();
-    Task<ResponseDto<RoleUpdateDto>> UpdateRoleAsync(RoleDto roleDto);
+    Task<ResponseDto<RoleUpdateDto>> UpdateRoleAsync(RoleUpdateDto updateUpdateDto);
     Task<ResponseDto<RoleListDto>> GetAllByNonDeletedActiveAsync();
 
     // Command

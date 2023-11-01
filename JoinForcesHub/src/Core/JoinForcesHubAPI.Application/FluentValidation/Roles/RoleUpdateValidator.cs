@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using JoinForcesHub.Domain.Entities.Roles;
 
-namespace JoinForcesHubAPI.Application.FluentValidation;
+namespace JoinForcesHubAPI.Application.FluentValidation.Roles;
 
 public class RoleUpdateValidator : AbstractValidator<Role>
 {

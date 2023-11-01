@@ -2,7 +2,7 @@
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 
-namespace JoinForcesHubAPI.Application.FluentValidation;
+namespace JoinForcesHubAPI.Application.FluentValidation.Roles;
 
 public class RoleCreateValidator : AbstractValidator<Role>
 {

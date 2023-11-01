@@ -23,9 +23,9 @@ public class UserRoleQueryRepository : IUserRoleQueryRepository
         _context = context;
     }
 
-    public int Count(Expression<Func<UserRole, bool>> expression)
+    public async Task<int> CountAsync(Expression<Func<UserRole, bool>> expression)
     {
-        return _context.UserRoles.Count(expression);
+        return await _context.UserRoles.CountAsync(expression);
     }
 
     public IQueryable<UserRole> GetAll(bool isTracking = true)
@@ -49,5 +49,17 @@ public class UserRoleQueryRepository : IUserRoleQueryRepository
             result = result.AsNoTracking();
 
         return result;
+    }
+
+    public Task<UserRole> GetFirstExpression(Expression<Func<UserRole, bool>> expression, bool isTracking = true)
+    {
+        if (isTracking)
+        {
+            return _context.UserRoles.FirstOrDefaultAsync(expression);
+        }
+        else
+        {
+            return _context.UserRoles.AsNoTracking().FirstOrDefaultAsync(expression);
+        }
     }
 }

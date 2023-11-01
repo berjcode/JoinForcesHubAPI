@@ -19,14 +19,13 @@ public class RoleService : BaseService<Role>, IRoleService
     public RoleService(
         IMapper mapper,
         IRoleQueryRepository queryRepository,
-        IRoleCommandRepository commandRepository
-,
+        IRoleCommandRepository commandRepository,
         IValidator<Role> validator)
         : base(mapper)
     {
+        _validator = validator;
         _queryRepository = queryRepository;
         _commandRepository = commandRepository;
-        _validator = validator;
     }
 
     public async Task<ResponseDto<bool>> CreateRoleAsync(RoleCreateDto roleCreateDto, CancellationToken cancellationToken)
@@ -34,13 +33,8 @@ public class RoleService : BaseService<Role>, IRoleService
         var role = _mapper.Map<Role>(roleCreateDto);
 
         var validationResult = _validator.Validate(role);
-
         if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors;
-            foreach (var error in errors)
-                return ResponseDto<bool>.Fail(error.ErrorMessage, (int)ApiStatusCode.BadRequest);
-        }
+            return ResponseDto<bool>.Fail(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), (int)ApiStatusCode.BadRequest);
 
         var checkRole = await _queryRepository.CountAsync(x => x.RoleName == roleCreateDto.RoleName && x.IsDeleted == false);
 
@@ -92,7 +86,7 @@ public class RoleService : BaseService<Role>, IRoleService
         throw new NotImplementedException();
     }
 
-    public Task<ResponseDto<RoleUpdateDto>> UpdateRoleAsync(RoleDto roleDto)
+    public Task<ResponseDto<RoleUpdateDto>> UpdateRoleAsync(RoleUpdateDto updateUpdateDto)
     {
         throw new NotImplementedException();
     }

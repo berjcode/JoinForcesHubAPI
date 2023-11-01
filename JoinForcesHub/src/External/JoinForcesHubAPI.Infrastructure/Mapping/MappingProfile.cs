@@ -3,6 +3,7 @@ using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Contracts.Users;
 using JoinForcesHubAPI.Application.Contracts.Roles;
+using JoinForcesHubAPI.Application.Contracts.UserRoles;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 namespace JoinForcesHubAPI.Infrastructure.Mapping;
@@ -21,9 +22,16 @@ public class MappingProfile : Profile
 
         // Role
         CreateMap<RoleDto, Role>().ReverseMap();
-        CreateMap<RoleCreateDto, Role>().ReverseMap();
         CreateMap<RoleListDto, Role>().ReverseMap();
+        CreateMap<RoleCreateDto, Role>().ReverseMap();
         CreateMap<RoleRemoveDto, Role>().ReverseMap();
         CreateMap<RoleUpdateDto, Role>().ReverseMap();
+
+        // UserRole
+        CreateMap<UserRoleDto, UserRole>().ReverseMap();
+        CreateMap<UserRoleListDto, UserRole>().ReverseMap();
+        CreateMap<UserRoleUpdateDto, UserRole>().ReverseMap();
+        CreateMap<UserRoleCreateDto, UserRole>().ReverseMap();
+        CreateMap<UserRoleRemoveDto, UserRole>().ReverseMap();
     }
 }
