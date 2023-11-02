@@ -1,6 +1,9 @@
-﻿using JoinForcesHub.Domain.Entities.Roles;
+﻿using System.Linq.Expressions;
+using JoinForcesHub.Domain.Entities.User;
+using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRoleRepositories;
 
@@ -15,9 +18,9 @@ public class UserRoleCommandRepository : IUserRoleCommandRepository
 
     public async Task<bool> AddAsync(UserRole userRole, CancellationToken cancellationToken)
     {
-            await _context.UserRoles.AddAsync(userRole, cancellationToken);
+        await _context.UserRoles.AddAsync(userRole, cancellationToken);
 
-            if (await _context.SaveChangesAsync(cancellationToken) > 0)
+        if (await _context.SaveChangesAsync(cancellationToken) > 0)
             return true;
 
         return false;
@@ -28,6 +31,11 @@ public class UserRoleCommandRepository : IUserRoleCommandRepository
         await _context.UserRoles.AddRangeAsync(userRoles, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<bool> AnyAsync(Expression<Func<User, bool>> predicate)
+    {
+        return await _context.Users.AnyAsync(predicate);
     }
 
     public void Remove(UserRole userRole)

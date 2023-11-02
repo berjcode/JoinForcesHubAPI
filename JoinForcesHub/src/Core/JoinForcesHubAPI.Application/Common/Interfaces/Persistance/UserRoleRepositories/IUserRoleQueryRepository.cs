@@ -7,6 +7,7 @@ public interface IUserRoleQueryRepository
 {
     Task<UserRole> GetFirst(bool isTracking = true);
     IQueryable<UserRole> GetAll(bool isTracking = true);
+    Task<bool> AnyAsync(Expression<Func<UserRole, bool>> predicate);
     Task<int> CountAsync(Expression<Func<UserRole, bool>> expression);
     Task<UserRole> GetFirstExpression(Expression<Func<UserRole, bool>> expression, bool isTracking = true);
     IQueryable<UserRole> GetWhere(Expression<Func<UserRole, bool>> expression, bool isTracking = true);

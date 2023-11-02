@@ -62,4 +62,9 @@ public class UserRoleQueryRepository : IUserRoleQueryRepository
             return _context.UserRoles.AsNoTracking().FirstOrDefaultAsync(expression);
         }
     }
+
+    public async Task<bool> AnyAsync(Expression<Func<UserRole, bool>> predicate)
+    {
+        return await _context.UserRoles.AnyAsync(predicate);
+    }
 }

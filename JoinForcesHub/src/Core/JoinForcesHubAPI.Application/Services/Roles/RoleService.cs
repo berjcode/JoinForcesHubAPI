@@ -36,9 +36,7 @@ public class RoleService : BaseService<Role>, IRoleService
         if (!validationResult.IsValid)
             return ResponseDto<bool>.Fail(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), (int)ApiStatusCode.BadRequest);
 
-        var checkRole = await _queryRepository.CountAsync(x => x.RoleName == roleCreateDto.RoleName && x.IsDeleted == false);
-
-        if (checkRole > 0)
+        if (await _queryRepository.AnyAsync((x => x.RoleName == roleCreateDto.RoleName && x.IsDeleted == false)))
             throw new Exception(ServiceExceptionMessages.RoleAlreadyRegistered);
 
         role.CreationDate = DateTime.UtcNow;

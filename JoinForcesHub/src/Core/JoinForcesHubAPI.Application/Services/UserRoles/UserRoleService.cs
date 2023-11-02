@@ -37,16 +37,12 @@ public class UserRoleService : BaseService<UserRole>, IUserRoleService
     public async Task<ResponseDto<bool>> CreateUserRoleAsync(UserRoleCreateDto userRoleCreateDto, CancellationToken cancellationToken)
     {
         var userRole = _mapper.Map<UserRole>(userRoleCreateDto);
-
         var validationResult = _userRoleValidator.Validate(userRole);
-
         if (!validationResult.IsValid)
             return ResponseDto<bool>.Fail(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), (int)ApiStatusCode.BadRequest);
 
-        var checkUserRole = await _userRolequeryRepository
-            .CountAsync(x => x.UserId == userRoleCreateDto.UserId && x.RoleId == userRoleCreateDto.RoleId);
-        if (checkUserRole > 0)
-            throw new Exception(ServiceExceptionMessages.RoleAlreadyRegistered);
+        if (await _userRolequeryRepository.AnyAsync(x => x.UserId == userRoleCreateDto.UserId && x.RoleId == userRoleCreateDto.RoleId))
+            return ResponseDto<bool>.Fail(ServiceExceptionMessages.RoleAlreadyRegistered, (int)ApiStatusCode.BadRequest);
 
         userRole.CreationDate = DateTime.UtcNow;
         userRole.CreatedByUserName = userRoleCreateDto.CreatedByUserName;
