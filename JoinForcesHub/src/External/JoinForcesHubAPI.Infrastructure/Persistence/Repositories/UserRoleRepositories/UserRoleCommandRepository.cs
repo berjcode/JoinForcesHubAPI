@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRoleRepositories;
 

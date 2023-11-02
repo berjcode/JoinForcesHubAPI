@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Application.Abstractions;
@@ -14,16 +15,21 @@ namespace JoinForcesHubAPI.Application.Services.Authentication;
 public class AuthenticationService : BaseService<User>, IAuthenticationService
 {
 
+    private readonly IValidator<User> _userValidator;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserCommandRepository _userCommandRepository;
 
     public AuthenticationService(
         IMapper mapper,
+        IValidator<User> userValidator,
         IJwtTokenGenerator jwtTokenGenerator,
         IUserQueryRepository userQueryRepository,
-        IUserCommandRepository userCommandRepository) : base(mapper)
+        IUserCommandRepository userCommandRepository
+        )
+        : base(mapper)
     {
+        _userValidator = userValidator;
         _jwtTokenGenerator = jwtTokenGenerator;
         _userQueryRepository = userQueryRepository;
         _userCommandRepository = userCommandRepository;
@@ -33,6 +39,10 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
     public async Task<ResponseDto<AuthenticationResultDto>> Register(RegisterRequest registerRequest)
     {
         var user = _mapper.Map<User>(registerRequest);
+
+        var validationResult = _userValidator.Validate(user);
+        if (!validationResult.IsValid)
+            return ResponseDto<AuthenticationResultDto>.Fail(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), (int)ApiStatusCode.BadRequest);
 
         if (await _userQueryRepository.GetUserByEmail(user.Email) != null)
             throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
