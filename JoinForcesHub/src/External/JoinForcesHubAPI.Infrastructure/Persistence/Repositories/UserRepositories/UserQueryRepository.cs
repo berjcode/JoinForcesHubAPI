@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
+using JoinForcesHub.Domain.Entities.Roles;
 
 namespace JoinForcesHubAPI.Infrastructure.Persistence.Repositories.UserRepositories;
 
@@ -19,6 +20,11 @@ public class UserQueryRepository : IUserQueryRepository
     public UserQueryRepository(JoinForcesHubDbContext context)
     {
         _context = context;
+    }
+
+    public async Task<bool> AnyAsync(Expression<Func<User, bool>> predicate)
+    {
+        return await _context.Users.AnyAsync(predicate);
     }
 
     public int Count(Expression<Func<User, bool>> expression)
@@ -56,5 +62,17 @@ public class UserQueryRepository : IUserQueryRepository
             result = result.AsNoTracking();
 
         return result;
+    }
+
+    public async Task<User> GetFirstExpression(Expression<Func<User, bool>> expression, bool isTracking = true)
+    {
+        if (isTracking)
+        {
+            return await _context.Users.FirstOrDefaultAsync(expression);
+        }
+        else
+        {
+            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(expression);
+        }
     }
 }

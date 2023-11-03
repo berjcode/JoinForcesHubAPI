@@ -1,6 +1,11 @@
-﻿namespace JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+﻿using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
+
+namespace JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(Guid userId, string firstName, string surName, List<string> roles);
+    string GenerateRefreshToken();
+    TokenDto GenerateToken(Guid userId, string firstName, string surName, List<string> roles);
+
+
 }

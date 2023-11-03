@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
+using System.Security.Cryptography;
+using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 namespace JoinForcesHubAPI.Infrastructure.Authentication;
 
@@ -18,8 +20,21 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _jwtSettings = jwtSettings.Value;
     }
 
-    public string GenerateToken(Guid userId, string firstName, string surName, List<string> roles)
+    public string GenerateRefreshToken()
     {
+        byte[] number = new byte[32];
+
+        using (RandomNumberGenerator random = RandomNumberGenerator.Create())
+        {
+            random.GetBytes(number);
+        }
+
+        return Convert.ToBase64String(number);
+    }
+
+    public TokenDto GenerateToken(Guid userId, string firstName, string surName, List<string> roles)
+    {
+        TokenDto token = new TokenDto();
 
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
@@ -34,6 +49,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator
            new Claim(ClaimTypes.Role,string.Join(",", roles))
        };
 
+        token.Expiration = _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
+
         var securityToken = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
@@ -42,6 +59,11 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             signingCredentials: signingCredentials
             );
 
-        return new JwtSecurityTokenHandler().WriteToken(securityToken);
+        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+        token.AccessToken = tokenHandler.WriteToken(securityToken);
+        token.RefreshToken = GenerateRefreshToken();
+
+        return token;
     }
 }

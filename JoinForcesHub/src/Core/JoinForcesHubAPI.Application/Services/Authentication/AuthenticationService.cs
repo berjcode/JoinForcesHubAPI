@@ -63,7 +63,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         roles.Add(AppSettingExpression.MemberRegisterExpression);
 
         var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
     }
@@ -85,20 +85,33 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
         var token = _jwtTokenGenerator.GenerateToken(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, roleNames);
 
-        var authResult = new AuthenticationResultDto(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, checkEmailByUser.Email, token);
+        var authResult = new AuthenticationResultDto(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, checkEmailByUser.Email, token.AccessToken);
+
+        await UpdateRefreshToken(token.RefreshToken, token.Expiration, 20, checkEmailByUser.Id);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);
     }
 
     #region HelperMethods
-    //Private 
-    private bool IsExistsRegisterForUserName(string userName)
+    private bool IsExistsRegisterForUserName(string userName)                                                      
     {
         var result = _userQueryRepository.GetWhere(x => x.UserName == userName && x.IsDeleted == false).FirstOrDefault();
         if (result != null)
             return true;
 
         return false;
+    }
+
+    public async Task UpdateRefreshToken(string refreshToken, DateTime accessTokenDate, int refreshTokenLifeTime, Guid userId)
+    {
+        var user = await _userQueryRepository.GetFirstExpression(x => x.Id == userId);
+        if (user != null)
+        {
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenEndData = accessTokenDate.AddMinutes(refreshTokenLifeTime);
+
+            _userCommandRepository.Update(user);
+        }
     }
     #endregion
 }
