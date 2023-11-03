@@ -51,6 +51,7 @@ public class UserRoleQueryRepository : IUserRoleQueryRepository
         return result;
     }
 
+
     public Task<UserRole> GetFirstExpression(Expression<Func<UserRole, bool>> expression, bool isTracking = true)
     {
         if (isTracking)
@@ -66,5 +67,22 @@ public class UserRoleQueryRepository : IUserRoleQueryRepository
     public async Task<bool> AnyAsync(Expression<Func<UserRole, bool>> predicate)
     {
         return await _context.UserRoles.AnyAsync(predicate);
+    }
+
+
+    public async Task<IList<UserRole>> GetAllExpressionAsync(Expression<Func<UserRole, bool>> predicate = null, params Expression<Func<UserRole, object>>[] includeProperties)
+    {
+        IQueryable<UserRole> query = _context.UserRoles;
+        if (predicate != null)
+            query = query.Where(predicate);
+       
+        if (includeProperties.Any())
+        {
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+        return await query.ToListAsync();
     }
 }

@@ -6,7 +6,7 @@ namespace JoinForcesHubAPI.Application.Services.UserRoles;
 public interface IUserRoleService
 {
     Task<ResponseDto<int>> CountUserRoleAsync();
-    Task<ResponseDto<UserRoleDto>> GetAsync(int roleId);
+    Task<List<UserRolesByUserIdListDto>> GetRoleByUserAsync(Guid userId);
     Task<ResponseDto<UserRoleListDto>> GetAllByDeletedAsync();
     Task<ResponseDto<UserRoleListDto>> GetAllByNonDeletedActiveAsync();
     Task<ResponseDto<UserRoleUpdateDto>> UpdateUserRoleAsync(UserRoleUpdateDto userRoleDto);

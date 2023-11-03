@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHub.Domain.Entities.Roles;
+using JoinForcesHubAPI.Application.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 using JoinForcesHubAPI.Application.Services.Roles;
 using JoinForcesHubAPI.Application.Services.UserRoles;
@@ -24,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<Role>, RoleCreateValidator>();
         services.AddScoped<IValidator<UserRole>, UserRoleCreateValidator>();
 
+        services.AddAutoMapper(typeof(MappingProfile));
         return services;
     }
 }

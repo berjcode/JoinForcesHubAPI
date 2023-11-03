@@ -9,4 +9,5 @@ public class Role : BaseEntity
 
     //
     public ICollection<UserRole> UserRoles { get;  set; }
+
 }

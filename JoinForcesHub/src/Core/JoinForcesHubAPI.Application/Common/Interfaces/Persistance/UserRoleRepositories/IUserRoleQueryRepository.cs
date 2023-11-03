@@ -11,4 +11,5 @@ public interface IUserRoleQueryRepository
     Task<int> CountAsync(Expression<Func<UserRole, bool>> expression);
     Task<UserRole> GetFirstExpression(Expression<Func<UserRole, bool>> expression, bool isTracking = true);
     IQueryable<UserRole> GetWhere(Expression<Func<UserRole, bool>> expression, bool isTracking = true);
+    Task<IList<UserRole>> GetAllExpressionAsync(Expression<Func<UserRole, bool>> predicate = null, params Expression<Func<UserRole, object>>[] includeProperties);
 }

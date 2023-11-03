@@ -5,6 +5,7 @@ using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Services.UserRoles;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
@@ -16,6 +17,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 {
 
     private readonly IValidator<User> _userValidator;
+    private readonly IUserRoleService _userRoleService;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserCommandRepository _userCommandRepository;
@@ -23,13 +25,14 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
     public AuthenticationService(
         IMapper mapper,
         IValidator<User> userValidator,
+        IUserRoleService userRoleService,
         IJwtTokenGenerator jwtTokenGenerator,
         IUserQueryRepository userQueryRepository,
-        IUserCommandRepository userCommandRepository
-        )
+        IUserCommandRepository userCommandRepository)
         : base(mapper)
     {
         _userValidator = userValidator;
+        _userRoleService = userRoleService;
         _jwtTokenGenerator = jwtTokenGenerator;
         _userQueryRepository = userQueryRepository;
         _userCommandRepository = userCommandRepository;
@@ -41,14 +44,15 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         var user = _mapper.Map<User>(registerRequest);
 
         var validationResult = _userValidator.Validate(user);
+
         if (!validationResult.IsValid)
             return ResponseDto<AuthenticationResultDto>.Fail(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), (int)ApiStatusCode.BadRequest);
 
         if (await _userQueryRepository.GetUserByEmail(user.Email) != null)
-            throw new Exception(ServiceExceptionMessages.UserWithGivenEmailNotExist);
+            return ResponseDto<AuthenticationResultDto>.Fail(ServiceExceptionMessages.UserWithGivenEmailNotExist, (int)ApiStatusCode.BadRequest);
 
         if (IsExistsRegisterForUserName(registerRequest.UserName) == true)
-            throw new Exception(ServiceExceptionMessages.UserAlreadyRegistered);
+            return ResponseDto<AuthenticationResultDto>.Fail(ServiceExceptionMessages.UserAlreadyRegistered, (int)ApiStatusCode.BadRequest);
 
 
         user.CreationDate = DateTime.UtcNow;
@@ -74,12 +78,13 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         if (checkEmailByUser.Password != loginRequest.Password)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
-        //
-        List<string> roles = new List<string>();
-        roles.Add("Üye");
-        //
 
-        var token = _jwtTokenGenerator.GenerateToken(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, roles);
+        var getUserRoles = await _userRoleService.GetRoleByUserAsync(checkEmailByUser.Id);
+        var roleNames = getUserRoles.Select(ur => ur.RolesRoleName).ToList();
+
+
+        var token = _jwtTokenGenerator.GenerateToken(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, roleNames);
+
         var authResult = new AuthenticationResultDto(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, checkEmailByUser.Email, token);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);

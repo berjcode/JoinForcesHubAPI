@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
-using JoinForcesHubAPI.Infrastructure.Mapping;
+using JoinForcesHubAPI.Application.Mapping;
 using JoinForcesHubAPI.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -53,8 +53,8 @@ public static class DependencyInjection
                     Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
             });
 
-        //AutoMapper
-        services.AddAutoMapper(typeof(MappingProfile));
+  
+      
         //Context
         services.AddDbContext<JoinForcesHubDbContext>(options => options.UseSqlServer(configuration.GetConnectionString(AppSettingExpression.JoinForcesHubSqlServerConnection)));
         return services;

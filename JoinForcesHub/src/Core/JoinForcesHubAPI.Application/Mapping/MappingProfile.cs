@@ -6,7 +6,7 @@ using JoinForcesHubAPI.Application.Contracts.Roles;
 using JoinForcesHubAPI.Application.Contracts.UserRoles;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
-namespace JoinForcesHubAPI.Infrastructure.Mapping;
+namespace JoinForcesHubAPI.Application.Mapping;
 
 public class MappingProfile : Profile
 {
@@ -33,5 +33,6 @@ public class MappingProfile : Profile
         CreateMap<UserRoleUpdateDto, UserRole>().ReverseMap();
         CreateMap<UserRoleCreateDto, UserRole>().ReverseMap();
         CreateMap<UserRoleRemoveDto, UserRole>().ReverseMap();
+        CreateMap<UserRolesByUserIdListDto, UserRole>().ReverseMap();
     }
 }

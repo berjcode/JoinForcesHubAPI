@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Contracts.UserRoles;
-using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
-using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
-using FluentValidation;
-using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
+using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
 
 namespace JoinForcesHubAPI.Application.Services.UserRoles;
 
@@ -22,7 +22,7 @@ public class UserRoleService : BaseService<UserRole>, IUserRoleService
         IValidator<UserRole> userRoleValidator,
         IUserRoleQueryRepository userRolequeryRepository,
         IUserRoleCommandRepository userRolecommandRepository
-        ) : base(mapper)
+      ) : base(mapper)
     {
         _userRoleValidator = userRoleValidator;
         _userRolequeryRepository = userRolequeryRepository;
@@ -62,9 +62,14 @@ public class UserRoleService : BaseService<UserRole>, IUserRoleService
         throw new NotImplementedException();
     }
 
-    public Task<ResponseDto<UserRoleDto>> GetAsync(int roleId)
+    public async Task<List<UserRolesByUserIdListDto>> GetRoleByUserAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var userRoles = await _userRolequeryRepository
+            .GetAllExpressionAsync(ur => ur.UserId == userId, x => x.Users, x => x.Roles);
+
+        var userListDto = _mapper.Map<List<UserRolesByUserIdListDto>>(userRoles);
+
+        return userListDto;
     }
 
     public Task<ResponseDto<bool>> HardDeleteUserRoleAsync(Guid userRoleId, CancellationToken cancellationToken)
