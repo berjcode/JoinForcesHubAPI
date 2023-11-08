@@ -49,7 +49,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
            new Claim(ClaimTypes.Role,string.Join(",", roles))
        };
 
-        token.Expiration = _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
+        token.AccessTokenExpiration = _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
 
         var securityToken = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
@@ -63,6 +63,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
         token.AccessToken = tokenHandler.WriteToken(securityToken);
         token.RefreshToken = GenerateRefreshToken();
+        token.RefreshTokenExpiration = _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.RefreshTokenExpiryMinutes);
 
         return token;
     }

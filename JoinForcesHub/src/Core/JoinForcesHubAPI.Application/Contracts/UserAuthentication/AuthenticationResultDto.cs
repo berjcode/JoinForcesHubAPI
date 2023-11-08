@@ -5,6 +5,9 @@ Guid Id,
 string Firstname,
 string SurName,
 string Email,
-string Token
+string Token,
+DateTime AccessTokenExpiration,
+string RefreshToken,
+DateTime? RefreshTokenExpiration
 );
 

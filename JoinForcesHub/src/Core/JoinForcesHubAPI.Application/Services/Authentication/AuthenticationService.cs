@@ -63,37 +63,39 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         roles.Add(AppSettingExpression.MemberRegisterExpression);
 
         var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken);
-
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration, null, null);
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
     }
 
     public async Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest)
     {
-        var checkEmailByUser = await _userQueryRepository.GetUserByEmail(loginRequest.Email);
+        var user = await _userQueryRepository.GetUserByEmail(loginRequest.Email);
 
-        if (checkEmailByUser == null)
+        if (user == null)
             throw new Exception(ServiceExceptionMessages.ThisUserNotRegister);
 
-        if (checkEmailByUser.Password != loginRequest.Password)
+        if (user.Password != loginRequest.Password)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
 
-        var getUserRoles = await _userRoleService.GetRoleByUserAsync(checkEmailByUser.Id);
+        var getUserRoles = await _userRoleService.GetRoleByUserAsync(user.Id);
         var roleNames = getUserRoles.Select(ur => ur.RolesRoleName).ToList();
 
 
-        var token = _jwtTokenGenerator.GenerateToken(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, roleNames);
+        var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roleNames);
 
-        var authResult = new AuthenticationResultDto(checkEmailByUser.Id, checkEmailByUser.FirstName, checkEmailByUser.SurName, checkEmailByUser.Email, token.AccessToken);
 
-        await UpdateRefreshToken(token.RefreshToken, token.Expiration, 20, checkEmailByUser.Id);
+        if (user.RefreshToken.Length == 0 && user.RefreshTokenEndData == null)
+            await UpdateRefreshToken(token.RefreshToken, token.RefreshTokenExpiration, 20, user.Id);
+
+
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token.AccessToken, token.AccessTokenExpiration, user.RefreshToken, token.RefreshTokenExpiration);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);
     }
 
     #region HelperMethods
-    private bool IsExistsRegisterForUserName(string userName)                                                      
+    private bool IsExistsRegisterForUserName(string userName)
     {
         var result = _userQueryRepository.GetWhere(x => x.UserName == userName && x.IsDeleted == false).FirstOrDefault();
         if (result != null)
@@ -102,16 +104,47 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         return false;
     }
 
-    public async Task UpdateRefreshToken(string refreshToken, DateTime accessTokenDate, int refreshTokenLifeTime, Guid userId)
+    public async Task UpdateRefreshToken(string refreshToken, DateTime? accessTokenDate, int refreshTokenLifeTime, Guid userId)
     {
         var user = await _userQueryRepository.GetFirstExpression(x => x.Id == userId);
         if (user != null)
         {
             user.RefreshToken = refreshToken;
-            user.RefreshTokenEndData = accessTokenDate.AddMinutes(refreshTokenLifeTime);
+            user.RefreshTokenEndData = accessTokenDate?.AddMinutes(refreshTokenLifeTime);
 
             _userCommandRepository.Update(user);
         }
+    }
+
+    public async Task<ResponseDto<NoDataDto>> RevokeRefreshToken(string refreshToken)
+    {
+        var existRefreshToken = await _userQueryRepository.GetFirstExpression(x => x.RefreshToken == refreshToken && x.RefreshTokenEndData > DateTime.UtcNow);
+
+        if (existRefreshToken == null)
+            return ResponseDto<NoDataDto>.Fail(ApiMessages.NotFoundRefreshtoken, 404);
+
+        await UpdateRefreshToken("", DateTime.Now, 0, existRefreshToken.Id);
+
+        return ResponseDto<NoDataDto>.Success(null, 200);
+    }
+
+    public async Task<ResponseDto<TokenDto>> CreateTokenByRefreshToken(string refreshToken)
+    {
+        var existRefreshToken = await _userQueryRepository.GetFirstExpression(x => x.RefreshToken == refreshToken && x.RefreshTokenEndData > DateTime.UtcNow);
+
+        if (existRefreshToken == null)
+            return ResponseDto<TokenDto>.Fail(ApiMessages.NotFoundRefreshtoken, 404);
+
+        var getUserRoles = await _userRoleService.GetRoleByUserAsync(existRefreshToken.Id);
+        var roleNames = getUserRoles.Select(ur => ur.RolesRoleName).ToList();
+
+        var token = _jwtTokenGenerator.GenerateToken(existRefreshToken.Id, existRefreshToken.FirstName, existRefreshToken.SurName, roleNames);
+
+        DateTime? nullDatetime = null;
+        await UpdateRefreshToken("", nullDatetime, 0, existRefreshToken.Id);
+
+
+        return ResponseDto<TokenDto>.Success(token, 200);
     }
     #endregion
 }
