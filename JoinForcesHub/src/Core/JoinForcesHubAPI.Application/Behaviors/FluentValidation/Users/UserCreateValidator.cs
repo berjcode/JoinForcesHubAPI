@@ -12,10 +12,10 @@ public class UserCreateValidator : AbstractValidator<User>
         RuleFor(user => user.About).NotEmpty();
         RuleFor(user => user.Email).NotEmpty();
         RuleFor(user => user.SurName).NotNull();
-        RuleFor(user => user.Password).NotNull();
+        RuleFor(user => user.PasswordHash).NotNull();
         RuleFor(user => user.UserName).NotNull();
         RuleFor(user => user.SurName).NotEmpty();
-        RuleFor(user => user.Password).NotEmpty();
+        RuleFor(user => user.PasswordHash).NotEmpty();
         RuleFor(user => user.FirstName).NotNull();
         RuleFor(user => user.UserName).NotEmpty();
         RuleFor(user => user.FirstName).NotEmpty();

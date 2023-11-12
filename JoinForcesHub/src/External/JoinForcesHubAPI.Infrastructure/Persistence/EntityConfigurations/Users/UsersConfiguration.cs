@@ -20,7 +20,7 @@ public sealed class UsersConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable(usersTableName);
         builder.Property(u => u.IsPremium).HasColumnType(bitExpressionOption).IsRequired();
         builder.Property(u => u.IsProfileVisible).HasColumnType(bitExpressionOption).IsRequired();
-        builder.Property(u => u.Password).HasColumnType(nvarcharMaxExpressionOption).IsRequired();
+        builder.Property(u => u.PasswordHash).HasColumnType(nvarcharMaxExpressionOption).IsRequired();
         builder.Property(u => u.PhotoPath).HasColumnType(nvarcharMaxExpressionOption).IsRequired();
         builder.Property(u => u.CoverPhoto).HasColumnType(nvarcharMaxExpressionOption).IsRequired();
         builder.Property(u => u.Location).HasColumnType(nvarcharHundredExpressionOption).IsRequired();
