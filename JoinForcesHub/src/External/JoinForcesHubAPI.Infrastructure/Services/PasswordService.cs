@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
@@ -32,7 +33,6 @@ public class PasswordService : IPasswordService
 
         using (RandomNumberGenerator random = RandomNumberGenerator.Create())
             random.GetBytes(randomBytes);
-
 
         return Convert.ToBase64String(randomBytes);
     }

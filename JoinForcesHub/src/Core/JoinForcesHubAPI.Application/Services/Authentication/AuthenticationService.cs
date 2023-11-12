@@ -60,6 +60,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
         if (IsExistsRegisterForUserName(registerRequest.UserName) == true)
             return ResponseDto<AuthenticationResultDto>.Fail(ServiceExceptionMessages.UserAlreadyRegistered, (int)ApiStatusCode.BadRequest);
+
         var userPasswordHash = _passwordService.HashPassword(registerRequest.PasswordHash);
         user.PasswordHash = userPasswordHash.PasswordHash;
         user.Salt = userPasswordHash.Salt;
