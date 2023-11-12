@@ -1,11 +1,13 @@
 ﻿using FluentValidation;
 using JoinForcesHub.Domain.Entities.User;
+using JoinForcesHubAPI.Application.Utilities.Messages;
 using System.Text.RegularExpressions;
 
 namespace JoinForcesHubAPI.Application.Behaviors.FluentValidation.Users;
 
 public class UserCreateValidator : AbstractValidator<User>
 {
+
     public UserCreateValidator()
     {
         RuleFor(user => user.About).NotNull();
@@ -42,20 +44,20 @@ public class UserCreateValidator : AbstractValidator<User>
         RuleFor(user => user.Location).MaximumLength(100);
         RuleFor(user => user.EducationStatus).MinimumLength(2);
         RuleFor(user => user.EducationStatus).MaximumLength(50);
-        RuleFor(user => user.PasswordHash).NotNull().Must(BeValidPassword).WithMessage("Geçerli bir şifre sağlanmalıdır.");
+        RuleFor(user => user.PasswordHash).NotNull().Must(BeValidPassword).WithMessage(ValidationMessages.IsNotValidPassword);
 
     }
     private bool BeValidPassword(string password)
     {
-        if (password.Length < 3 && password.Length > 30)
+        const int minLength = 3;
+        const int maxLength = 30;
+
+        if (password.Length < minLength && password.Length > maxLength)
             return false;
         if (!Regex.IsMatch(password, "[A-Z]"))
             return false;
 
         if (!Regex.IsMatch(password, "[a-z]"))
-            return false;
-
-        if (!password.Any(char.IsSymbol))
             return false;
 
         if (!password.Any(char.IsDigit))
