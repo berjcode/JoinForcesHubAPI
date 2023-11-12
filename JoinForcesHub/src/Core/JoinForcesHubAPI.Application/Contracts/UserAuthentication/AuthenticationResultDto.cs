@@ -7,7 +7,6 @@ string SurName,
 string Email,
 string Token,
 DateTime AccessTokenExpiration,
-string RefreshToken,
-DateTime? RefreshTokenExpiration
+string RefreshToken
 );
 

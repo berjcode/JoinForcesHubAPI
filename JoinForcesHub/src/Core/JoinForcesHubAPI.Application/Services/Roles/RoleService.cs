@@ -6,6 +6,7 @@ using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Contracts.Roles;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
 
@@ -18,10 +19,11 @@ public class RoleService : BaseService<Role>, IRoleService
     private readonly IRoleCommandRepository _commandRepository;
     public RoleService(
         IMapper mapper,
+        IDateTimeProvider dateTimeProvider,
         IRoleQueryRepository queryRepository,
         IRoleCommandRepository commandRepository,
         IValidator<Role> validator)
-        : base(mapper)
+        : base(mapper, dateTimeProvider)
     {
         _validator = validator;
         _queryRepository = queryRepository;

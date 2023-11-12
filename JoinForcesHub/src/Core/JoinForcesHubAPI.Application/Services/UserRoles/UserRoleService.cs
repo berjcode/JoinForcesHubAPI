@@ -8,6 +8,7 @@ using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
+using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 
 namespace JoinForcesHubAPI.Application.Services.UserRoles;
 
@@ -19,10 +20,11 @@ public class UserRoleService : BaseService<UserRole>, IUserRoleService
     private readonly IUserRoleCommandRepository _userRolecommandRepository;
     public UserRoleService(
         IMapper mapper,
+        IDateTimeProvider dateTimeProvider,
         IValidator<UserRole> userRoleValidator,
         IUserRoleQueryRepository userRolequeryRepository,
         IUserRoleCommandRepository userRolecommandRepository
-      ) : base(mapper)
+      ) : base(mapper, dateTimeProvider)
     {
         _userRoleValidator = userRoleValidator;
         _userRolequeryRepository = userRolequeryRepository;

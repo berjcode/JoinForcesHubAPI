@@ -5,11 +5,12 @@ using JoinForcesHubAPI.Application.Contracts.UserRoles;
 
 namespace JoinForcesHubWeb.API.Controllers.Roles;
 
-public sealed class UserRoles : ApiController
+[Route("api/[controller]s")]
+public sealed class UserRoleController : ApiController
 {
     private readonly IUserRoleService _userRoleService;
 
-    public UserRoles(IUserRoleService userRoleService)
+    public UserRoleController(IUserRoleService userRoleService)
     {
         _userRoleService = userRoleService;
     }

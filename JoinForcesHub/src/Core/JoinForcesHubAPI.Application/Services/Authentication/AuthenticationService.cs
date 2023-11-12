@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using JoinForcesHub.Domain.Enums;
 using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Services.UserRoles;
+using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 using JoinForcesHubAPI.Application.Common.Interfaces.Authentication;
@@ -21,15 +23,17 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserCommandRepository _userCommandRepository;
+  
 
     public AuthenticationService(
         IMapper mapper,
         IValidator<User> userValidator,
         IUserRoleService userRoleService,
+        IDateTimeProvider dateTimeProvider,
         IJwtTokenGenerator jwtTokenGenerator,
         IUserQueryRepository userQueryRepository,
         IUserCommandRepository userCommandRepository)
-        : base(mapper)
+        : base(mapper, dateTimeProvider)
     {
         _userValidator = userValidator;
         _userRoleService = userRoleService;
@@ -54,8 +58,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         if (IsExistsRegisterForUserName(registerRequest.UserName) == true)
             return ResponseDto<AuthenticationResultDto>.Fail(ServiceExceptionMessages.UserAlreadyRegistered, (int)ApiStatusCode.BadRequest);
 
-
-        user.CreationDate = DateTime.UtcNow;
+        user.CreationDate = DateTime.Now;
         user.CreatedByUserName = user.UserName;
         await _userCommandRepository.AddAsync(user);
 
@@ -63,7 +66,8 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         roles.Add(AppSettingExpression.MemberRegisterExpression);
 
         var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration, null, null);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration,  null);
+
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
     }
 
@@ -77,19 +81,19 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         if (user.Password != loginRequest.Password)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
+        if (user.RefreshTokenEndData < _dateTimeProvider.NowTime)
+            await UpdateRefreshToken("", null, (int)RefreshTokenTime.Zero, user.Id);
 
         var getUserRoles = await _userRoleService.GetRoleByUserAsync(user.Id);
         var roleNames = getUserRoles.Select(ur => ur.RolesRoleName).ToList();
 
-
         var token = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roleNames);
 
-
         if (user.RefreshToken.Length == 0 && user.RefreshTokenEndData == null)
-            await UpdateRefreshToken(token.RefreshToken, token.RefreshTokenExpiration, 20, user.Id);
+            await UpdateRefreshToken(token.RefreshToken, token.RefreshTokenExpiration, (int)RefreshTokenTime.Twenty, user.Id);
 
 
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token.AccessToken, token.AccessTokenExpiration, user.RefreshToken, token.RefreshTokenExpiration);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token.AccessToken, token.AccessTokenExpiration, user.RefreshToken);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);
     }
@@ -118,22 +122,22 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
     public async Task<ResponseDto<NoDataDto>> RevokeRefreshToken(string refreshToken)
     {
-        var existRefreshToken = await _userQueryRepository.GetFirstExpression(x => x.RefreshToken == refreshToken && x.RefreshTokenEndData > DateTime.UtcNow);
+        var existRefreshToken = await _userQueryRepository.GetFirstExpression(x => x.RefreshToken == refreshToken && x.RefreshTokenEndData > _dateTimeProvider.NowTime);
 
         if (existRefreshToken == null)
-            return ResponseDto<NoDataDto>.Fail(ApiMessages.NotFoundRefreshtoken, 404);
+            return ResponseDto<NoDataDto>.Fail(ApiMessages.NotFoundRefreshtoken, (int)ApiStatusCode.BadRequest);
 
-        await UpdateRefreshToken("", DateTime.Now, 0, existRefreshToken.Id);
+        await UpdateRefreshToken("", null, (int)RefreshTokenTime.Zero, existRefreshToken.Id);
 
-        return ResponseDto<NoDataDto>.Success(null, 200);
+        return ResponseDto<NoDataDto>.Success(null, (int)ApiStatusCode.Success);
     }
 
     public async Task<ResponseDto<TokenDto>> CreateTokenByRefreshToken(string refreshToken)
     {
-        var existRefreshToken = await _userQueryRepository.GetFirstExpression(x => x.RefreshToken == refreshToken && x.RefreshTokenEndData > DateTime.UtcNow);
+        var existRefreshToken = await _userQueryRepository.GetFirstExpression(x => x.RefreshToken == refreshToken && x.RefreshTokenEndData > _dateTimeProvider.NowTime);
 
         if (existRefreshToken == null)
-            return ResponseDto<TokenDto>.Fail(ApiMessages.NotFoundRefreshtoken, 404);
+            return ResponseDto<TokenDto>.Fail(ApiMessages.NotFoundRefreshtoken, (int)ApiStatusCode.BadRequest);
 
         var getUserRoles = await _userRoleService.GetRoleByUserAsync(existRefreshToken.Id);
         var roleNames = getUserRoles.Select(ur => ur.RolesRoleName).ToList();
@@ -141,10 +145,10 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         var token = _jwtTokenGenerator.GenerateToken(existRefreshToken.Id, existRefreshToken.FirstName, existRefreshToken.SurName, roleNames);
 
         DateTime? nullDatetime = null;
-        await UpdateRefreshToken("", nullDatetime, 0, existRefreshToken.Id);
+        await UpdateRefreshToken("", nullDatetime, (int)RefreshTokenTime.Zero, existRefreshToken.Id);
 
 
-        return ResponseDto<TokenDto>.Success(token, 200);
+        return ResponseDto<TokenDto>.Success(token, (int)ApiStatusCode.Success);
     }
     #endregion
 }

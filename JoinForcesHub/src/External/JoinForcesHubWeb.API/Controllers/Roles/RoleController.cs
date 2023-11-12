@@ -5,6 +5,7 @@ using JoinForcesHubAPI.Application.Contracts.Roles;
 
 namespace JoinForcesHubWeb.API.Controllers.Roles
 {
+    [Route("api/[controller]s")]
     public sealed class RoleController : ApiController
     {
         private readonly IRoleService _roleService;
