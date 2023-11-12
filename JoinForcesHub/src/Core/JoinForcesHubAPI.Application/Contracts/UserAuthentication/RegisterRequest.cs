@@ -6,7 +6,7 @@ public record RegisterRequest(
     string UserName,
     string Email,
     string About,
-    string Password,
+    string PasswordHash,
     string PhotoPath,
     string GithubLink,
     string LinkedlnLink,

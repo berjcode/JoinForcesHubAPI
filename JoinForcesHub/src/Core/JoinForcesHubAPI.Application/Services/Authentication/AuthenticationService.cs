@@ -20,15 +20,17 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
     private readonly IValidator<User> _userValidator;
     private readonly IUserRoleService _userRoleService;
+    private readonly IPasswordService _passwordService;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserQueryRepository _userQueryRepository;
     private readonly IUserCommandRepository _userCommandRepository;
-  
+
 
     public AuthenticationService(
         IMapper mapper,
         IValidator<User> userValidator,
         IUserRoleService userRoleService,
+        IPasswordService passwordService,
         IDateTimeProvider dateTimeProvider,
         IJwtTokenGenerator jwtTokenGenerator,
         IUserQueryRepository userQueryRepository,
@@ -36,6 +38,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         : base(mapper, dateTimeProvider)
     {
         _userValidator = userValidator;
+        _passwordService = passwordService;
         _userRoleService = userRoleService;
         _jwtTokenGenerator = jwtTokenGenerator;
         _userQueryRepository = userQueryRepository;
@@ -57,16 +60,21 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
         if (IsExistsRegisterForUserName(registerRequest.UserName) == true)
             return ResponseDto<AuthenticationResultDto>.Fail(ServiceExceptionMessages.UserAlreadyRegistered, (int)ApiStatusCode.BadRequest);
-
+        var userPasswordHash = _passwordService.HashPassword(registerRequest.PasswordHash);
+        user.PasswordHash = userPasswordHash.PasswordHash;
+        user.Salt = userPasswordHash.Salt;
         user.CreationDate = DateTime.Now;
         user.CreatedByUserName = user.UserName;
+        user.RefreshToken = "";
+        user.RefreshTokenEndData = null;
+        user.TwoFactorEnabled = false;
         await _userCommandRepository.AddAsync(user);
 
         List<string> roles = new List<string>();
         roles.Add(AppSettingExpression.MemberRegisterExpression);
 
         var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration,  null);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration, null);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
     }
@@ -74,11 +82,13 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
     public async Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest)
     {
         var user = await _userQueryRepository.GetUserByEmail(loginRequest.Email);
-
+       
         if (user == null)
             throw new Exception(ServiceExceptionMessages.ThisUserNotRegister);
 
-        if (user.Password != loginRequest.Password)
+        var isPasswordValid = _passwordService.VerifyPassword(loginRequest.Password, user.Salt, user.PasswordHash);
+
+        if (!isPasswordValid)
             throw new Exception(ServiceExceptionMessages.InvalidPassword);
 
         if (user.RefreshTokenEndData < _dateTimeProvider.NowTime)

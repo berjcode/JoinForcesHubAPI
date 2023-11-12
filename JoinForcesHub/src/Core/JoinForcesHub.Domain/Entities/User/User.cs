@@ -10,7 +10,8 @@ public class User : BaseEntity
     public string UserName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string About { get; set; }
-    public string Password { get; set; }
+    public string PasswordHash { get; set; }
+    public string Salt { get; set; }
     public string PhotoPath { get; set; }
     public string GithubLink { get; set; }
     public string LinkedlnLink { get; set; }

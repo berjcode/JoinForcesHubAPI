@@ -17,7 +17,7 @@ public sealed class AuthController : ApiController
     }
 
 
-    [HttpPost("users")]
+    [HttpPost("registers")]
     public async Task<IActionResult> UserRegister(RegisterRequest registerRequest)
     {
         var response = await _authenticationService.Register(registerRequest);
