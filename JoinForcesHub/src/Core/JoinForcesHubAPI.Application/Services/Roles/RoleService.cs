@@ -19,11 +19,13 @@ public class RoleService : BaseService<Role>, IRoleService
     private readonly IRoleCommandRepository _commandRepository;
     public RoleService(
         IMapper mapper,
+        IValidator<Role> validator,
+        IDbContextService dbContextService,
         IDateTimeProvider dateTimeProvider,
         IRoleQueryRepository queryRepository,
-        IRoleCommandRepository commandRepository,
-        IValidator<Role> validator)
-        : base(mapper, dateTimeProvider)
+        IRoleCommandRepository commandRepository
+        )
+        : base(mapper, dateTimeProvider, dbContextService)
     {
         _validator = validator;
         _queryRepository = queryRepository;

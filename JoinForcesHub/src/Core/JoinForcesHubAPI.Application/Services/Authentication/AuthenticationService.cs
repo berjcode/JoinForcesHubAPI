@@ -6,7 +6,6 @@ using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Abstractions;
-using JoinForcesHubAPI.Application.Services.Roles;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Services.UserRoles;
@@ -23,14 +22,13 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 {
 
 
-    private readonly IRoleQueryRepository _roleQueryRepository;
-    private readonly IRoleCommandRepository _roleCommandRepository;
     private readonly IValidator<User> _userValidator;
     private readonly IUserRoleService _userRoleService;
     private readonly IPasswordService _passwordService;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IRoleQueryRepository _roleQueryRepository;
     private readonly IUserQueryRepository _userQueryRepository;
-    private readonly IDbContextService _dbContextService;
+    private readonly IRoleCommandRepository _roleCommandRepository;
     private readonly IUserCommandRepository _userCommandRepository;
     private readonly IUserRoleCommandRepository _userRoleCommandRepository;
 
@@ -49,12 +47,11 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         IUserCommandRepository userCommandRepository,
         IUserRoleCommandRepository userRoleCommandRepository
         )
-        : base(mapper, dateTimeProvider)
+        : base(mapper, dateTimeProvider, dbContextService)
     {
         _userValidator = userValidator;
         _passwordService = passwordService;
         _userRoleService = userRoleService;
-        _dbContextService = dbContextService;
         _jwtTokenGenerator = jwtTokenGenerator;
         _userQueryRepository = userQueryRepository;
         _roleQueryRepository = roleQueryRepository;
@@ -87,42 +84,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
                 await _userCommandRepository.AddAsync(CreateFromUser);
 
-                var checkDefaultRole = await _roleQueryRepository.GetFirstExpression(x => x.RoleName == "Member");
-
-                List<string> roles = new List<string>();
-
-                Role newRole = new Role
-                {
-                    RoleName = "Member",
-                    CreatedByUserName = user.UserName,
-                    CreationDate = DateTime.Now,
-                    Description = "Üye oluşturulurken oluşan bir rol",
-                };
-                if (checkDefaultRole == null)
-                {
-                    roles.Add(newRole.RoleName);
-                    await _roleCommandRepository.AddAsync(newRole, cancellationToken);
-                    UserRole userRole = new UserRole
-                    {
-                        UserId = user.Id,
-                        RoleId = newRole.Id,
-                        CreatedByUserName = "Admin",
-                        CreationDate = DateTime.Now,
-                    };
-                    await _userRoleCommandRepository.AddAsync(userRole, cancellationToken);
-                }
-                else
-                {
-                    UserRole userRole = new UserRole
-                    {
-                        UserId = user.Id,
-                        RoleId = checkDefaultRole.Id,
-                        CreatedByUserName = "Admin",
-                        CreationDate = DateTime.Now,
-                    };
-
-                    await _userRoleCommandRepository.AddAsync(userRole, cancellationToken);
-                }
+                var roles = await CreateRoleAndUserRole(user, cancellationToken);
 
                 await _dbContextService.SaveChangesAsync(cancellationToken);
 
@@ -137,6 +99,48 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
                 return ResponseDto<AuthenticationResultDto>.Fail(ex.Message, (int)ApiStatusCode.InternalServerError);
             }
         }
+    }
+
+    private async Task<List<string>> CreateRoleAndUserRole(User user, CancellationToken cancellationToken)
+    {
+        var checkDefaultRole = await _roleQueryRepository.GetFirstExpression(x => x.RoleName == AppSettingExpression.MemberRegisterExpression);
+
+        List<string> roles = new List<string>();
+
+        Role newRole = new Role
+        {
+            RoleName = AppSettingExpression.MemberRegisterExpression,
+            CreatedByUserName = user.UserName,
+            CreationDate = DateTime.Now,
+            Description = AppSettingExpression.MemberRegisterDescription,
+        };
+        if (checkDefaultRole == null)
+        {
+            roles.Add(newRole.RoleName);
+            await _roleCommandRepository.AddAsync(newRole, cancellationToken);
+            UserRole userRole = new UserRole
+            {
+                UserId = user.Id,
+                RoleId = newRole.Id,
+                CreatedByUserName = AppSettingExpression.MemberRegisterRoleForCreateBy,
+                CreationDate = DateTime.Now,
+            };
+            await _userRoleCommandRepository.AddAsync(userRole, cancellationToken);
+        }
+        else
+        {
+            UserRole userRole = new UserRole
+            {
+                UserId = user.Id,
+                RoleId = checkDefaultRole.Id,
+                CreatedByUserName = AppSettingExpression.MemberRegisterRoleForCreateBy,
+                CreationDate = DateTime.Now,
+            };
+
+            await _userRoleCommandRepository.AddAsync(userRole, cancellationToken);
+        }
+
+        return roles;
     }
 
     public async Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest)

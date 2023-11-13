@@ -3,12 +3,12 @@ using FluentValidation;
 using JoinForcesHubAPI.Domain.Enums;
 using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Application.Abstractions;
-using JoinForcesHubAPI.Application.Contracts.UserRoles;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Contracts.UserRoles;
+using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.RoleRepositories;
-using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 
 namespace JoinForcesHubAPI.Application.Services.UserRoles;
 
@@ -21,10 +21,11 @@ public class UserRoleService : BaseService<UserRole>, IUserRoleService
     public UserRoleService(
         IMapper mapper,
         IDateTimeProvider dateTimeProvider,
+        IDbContextService dbContextService,
         IValidator<UserRole> userRoleValidator,
         IUserRoleQueryRepository userRolequeryRepository,
         IUserRoleCommandRepository userRolecommandRepository
-      ) : base(mapper, dateTimeProvider)
+      ) : base(mapper, dateTimeProvider, dbContextService)
     {
         _userRoleValidator = userRoleValidator;
         _userRolequeryRepository = userRolequeryRepository;

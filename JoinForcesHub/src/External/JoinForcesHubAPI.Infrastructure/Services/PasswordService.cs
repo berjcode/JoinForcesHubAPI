@@ -1,6 +1,5 @@
 ﻿using Azure.Core;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
