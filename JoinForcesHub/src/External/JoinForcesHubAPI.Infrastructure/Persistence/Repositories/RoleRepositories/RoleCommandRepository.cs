@@ -16,7 +16,7 @@ public class RoleCommandRepository : IRoleCommandRepository
     public async Task<bool> AddAsync(Role role, CancellationToken cancellationToken)
     {
         await _context.Roles.AddAsync(role, cancellationToken);
-        if (await _context.SaveChangesAsync() > 0)
+        if (await _context.Roles.AddAsync(role, cancellationToken) !=null)
             return true;
 
         return false;

@@ -18,9 +18,9 @@ public sealed class AuthController : ApiController
 
 
     [HttpPost("registers")]
-    public async Task<IActionResult> UserRegister(RegisterRequest registerRequest)
+    public async Task<IActionResult> UserRegister(RegisterRequest registerRequest, CancellationToken cancellationToken)
     {
-        var response = await _authenticationService.Register(registerRequest);
+        var response = await _authenticationService.Register(registerRequest, cancellationToken);
 
         return CreateActionResultInstance(response);
     }
@@ -34,7 +34,7 @@ public sealed class AuthController : ApiController
     }
 
 
-    [HttpPost("refreshtoken")]
+    [HttpPost("refreshtokens")]
     public async Task<IActionResult> CreateTokenByRefreshToken(RefreshTokenDto refreshTokenDto)
     {
         var result = await _authenticationService.CreateTokenByRefreshToken(refreshTokenDto.RefreshToken);

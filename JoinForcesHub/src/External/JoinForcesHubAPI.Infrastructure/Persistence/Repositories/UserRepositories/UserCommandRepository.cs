@@ -1,5 +1,4 @@
 ﻿using JoinForcesHub.Domain.Entities.User;
-using JoinForcesHub.Domain.Entities.Roles;
 using JoinForcesHubAPI.Infrastructure.Persistence.Contexts;
 using JoinForcesHubAPI.Application.Common.Interfaces.Persistance.UserRepositories;
 
@@ -17,10 +16,7 @@ public sealed class UserCommandRepository : IUserCommandRepository
 
     public async Task<bool> AddAsync(User user)
     {
-
-        await _context.Users.AddAsync(user);
-
-        if (await _context.SaveChangesAsync() > 0)
+        if (await _context.Users.AddAsync(user) != null)
             return true;
 
         return false;

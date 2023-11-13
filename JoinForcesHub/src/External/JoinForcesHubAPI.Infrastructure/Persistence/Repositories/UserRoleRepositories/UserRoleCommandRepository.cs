@@ -18,9 +18,8 @@ public class UserRoleCommandRepository : IUserRoleCommandRepository
 
     public async Task<bool> AddAsync(UserRole userRole, CancellationToken cancellationToken)
     {
-        await _context.UserRoles.AddAsync(userRole, cancellationToken);
-
-        if (await _context.SaveChangesAsync(cancellationToken) > 0)
+        
+        if (await _context.UserRoles.AddAsync(userRole, cancellationToken) !=null)
             return true;
 
         return false;

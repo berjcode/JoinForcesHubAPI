@@ -30,6 +30,7 @@ public static class DependencyInjection
         services.AddSingleton(Options.Create(jwtSettings));
         //Repository
         services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<IDbContextService, DbContextService>();
         services.AddScoped<IRoleQueryRepository, RoleQueryRepository>();
         services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         services.AddScoped<IUserCommandRepository, UserCommandRepository>();

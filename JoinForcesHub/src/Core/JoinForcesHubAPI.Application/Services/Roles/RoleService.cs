@@ -90,4 +90,13 @@ public class RoleService : BaseService<Role>, IRoleService
     {
         throw new NotImplementedException();
     }
+
+    public async Task<Role> GetByRoleNameAsync(string roleName)
+    {
+        var result = await _queryRepository.GetFirstExpression(x => x.RoleName == roleName);
+        if (result == null)
+            return null;
+
+        return result;
+    }
 }

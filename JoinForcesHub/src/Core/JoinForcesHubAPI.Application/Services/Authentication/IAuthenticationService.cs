@@ -5,10 +5,7 @@ namespace JoinForcesHubAPI.Application.Services.Authentication;
 
 public  interface IAuthenticationService
 {
-    Task<ResponseDto<NoDataDto>> RevokeRefreshToken(string refreshToken);
     Task<ResponseDto<TokenDto>> CreateTokenByRefreshToken(string refreshToken);
     Task<ResponseDto<AuthenticationResultDto>> Login(LoginRequest loginRequest);
-    Task<ResponseDto<AuthenticationResultDto>> Register(RegisterRequest registerRequest);
-    Task UpdateRefreshToken(string refreshToken, DateTime? accessTokenDate, int refreshTokenLifeTime, Guid userId);
-
+    Task<ResponseDto<AuthenticationResultDto>> Register(RegisterRequest registerRequest, CancellationToken cancellationToken);
 }
