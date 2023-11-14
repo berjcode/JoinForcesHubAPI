@@ -232,3 +232,4 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/JoinForcesHub/src/External/JoinForcesHubWeb.API/Content/Images
