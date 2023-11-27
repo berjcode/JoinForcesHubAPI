@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
-using JoinForcesHubAPI.Domain.Enums;
 using System.Text.RegularExpressions;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
-using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 
 namespace JoinForcesHubAPI.Infrastructure.Services;
 
 public class FileService : IFileService
 {
 
-    public async Task<ResponseDto<bool>> UploadFileAsync(IFormFile file, string fileType, string FolderName)
+    public async Task<string> UploadFileAsync(IFormFile file, string fileType, string FolderName)
     {
         if (file == null || file.Length == 0)
-            return ResponseDto<bool>.Fail("exx", 404);
+             throw new Exception("Not Empty");
 
         try
         {
@@ -33,20 +31,20 @@ public class FileService : IFileService
                 await file.CopyToAsync(stream);
             }
 
-            return ResponseDto<bool>.Success(true, (int)ApiStatusCode.Success);
+            return path;
         }
         catch (Exception ex)
         {
-            return ResponseDto<bool>.Fail($"Hata İle Karşılaşıldı: {ex}", 500);
+            throw new Exception($"Hata İle Karşılaşıldı: {ex.Message}", ex);
         }
     }
 
 
-    public async Task<(byte[], string)> GetFileAsync(string fileType, string FolderName,string fileName)
+    public async Task<(byte[], string)> GetFileAsync(string path)
     {
-        string path = $"./Content/{fileType}/{FolderName}/{fileName}";
+        string pathFile = path;
 
-        if (!File.Exists(path))
+        if (!File.Exists(pathFile))
         {
             string defaultImagePath = "./Content/Images/defaultphoto.png";
             byte[] defaultImageBytes = await File.ReadAllBytesAsync(defaultImagePath);
@@ -55,8 +53,8 @@ public class FileService : IFileService
             return (defaultImageBytes, defaultImageMimeType);
         }
 
-        byte[] fileBytes = await File.ReadAllBytesAsync(path);
-        string mimeType = GetMimeType(fileName);
+        byte[] fileBytes = await File.ReadAllBytesAsync(pathFile);
+        string mimeType = GetMimeType(pathFile);
 
         return (fileBytes, mimeType);
     }
@@ -93,4 +91,19 @@ public class FileService : IFileService
         }
     }
 
+    public Task DeleteFileAsync(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+                    File.Delete(path);
+        
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Dosya silme hatası: {ex.Message}");
+        }
+
+        return Task.CompletedTask;
+    }
 }
