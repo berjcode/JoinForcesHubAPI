@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
+using System.Text.RegularExpressions;
 using JoinForcesHub.Domain.Entities.User;
 using JoinForcesHubAPI.Application.Utilities.Messages;
-using System.Text.RegularExpressions;
 
 namespace JoinForcesHubAPI.Application.Behaviors.FluentValidation.Users;
 
@@ -24,8 +24,6 @@ public class UserCreateValidator : AbstractValidator<User>
         RuleFor(user => user.Location).NotNull();
         RuleFor(user => user.Location).NotEmpty();
         RuleFor(user => user.JobStatus).NotNull();
-        RuleFor(user => user.PhotoPath).NotNull();
-        RuleFor(user => user.PhotoPath).NotEmpty();
         RuleFor(user => user.JobStatus).NotEmpty();
         RuleFor(user => user.About).MinimumLength(2);
         RuleFor(user => user.Email).MinimumLength(2);
@@ -40,8 +38,6 @@ public class UserCreateValidator : AbstractValidator<User>
         RuleFor(user => user.FirstName).MinimumLength(2);
         RuleFor(user => user.FirstName).MaximumLength(50);
         RuleFor(user => user.EducationStatus).NotEmpty();
-        RuleFor(user => user.PhotoPath).MinimumLength(2);
-        RuleFor(user => user.Location).MaximumLength(100);
         RuleFor(user => user.EducationStatus).MinimumLength(2);
         RuleFor(user => user.EducationStatus).MaximumLength(50);
         RuleFor(user => user.PasswordHash).NotNull().Must(BeValidPassword).WithMessage(ValidationMessages.IsNotValidPassword);

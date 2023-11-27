@@ -18,7 +18,7 @@ public sealed class AuthController : ApiController
 
 
     [HttpPost("registers")]
-    public async Task<IActionResult> UserRegister(RegisterRequest registerRequest, CancellationToken cancellationToken)
+    public async Task<IActionResult> UserRegister([FromForm]RegisterRequest registerRequest,  CancellationToken cancellationToken)
     {
         var response = await _authenticationService.Register(registerRequest, cancellationToken);
 

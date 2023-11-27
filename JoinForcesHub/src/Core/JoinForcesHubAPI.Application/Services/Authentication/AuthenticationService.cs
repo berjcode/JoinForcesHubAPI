@@ -22,6 +22,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 {
 
 
+    private readonly IFileService _fileService;
     private readonly IValidator<User> _userValidator;
     private readonly IUserRoleService _userRoleService;
     private readonly IPasswordService _passwordService;
@@ -35,6 +36,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
     public AuthenticationService(
         IMapper mapper,
+        IFileService fileService,
         IValidator<User> userValidator,
         IUserRoleService userRoleService,
         IPasswordService passwordService,
@@ -46,9 +48,10 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         IRoleCommandRepository roleCommandRepository,
         IUserCommandRepository userCommandRepository,
         IUserRoleCommandRepository userRoleCommandRepository
-        )
+       )
         : base(mapper, dateTimeProvider, dbContextService)
     {
+        _fileService = fileService;
         _userValidator = userValidator;
         _passwordService = passwordService;
         _userRoleService = userRoleService;
@@ -63,14 +66,16 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
     public async Task<ResponseDto<AuthenticationResultDto>> Register(RegisterRequest registerRequest, CancellationToken cancellationToken)
     {
+        var user = _mapper.Map<User>(registerRequest);
+        var validationResult = _userValidator.Validate(user);
+
         using (var transaction = await _dbContextService.BeginTransactionAsync(cancellationToken))
         {
+            var userCoverPicture = await _fileService.UploadFileAsync(registerRequest.UserCoverPicture, "Images", "User");
+            var userProfilePicture = await _fileService.UploadFileAsync(registerRequest.UserProfilePicture, "Images", "User");
+
             try
             {
-                var user = _mapper.Map<User>(registerRequest);
-
-                var validationResult = _userValidator.Validate(user);
-
                 if (!validationResult.IsValid)
                     return ResponseDto<AuthenticationResultDto>.Fail(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), (int)ApiStatusCode.BadRequest);
 
@@ -80,9 +85,11 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
                 if (IsExistsRegisterForUserName(registerRequest.UserName))
                     return ResponseDto<AuthenticationResultDto>.Fail(ServiceExceptionMessages.UserAlreadyRegistered, (int)ApiStatusCode.BadRequest);
 
-                var CreateFromUser = CreateUserFromUser(user);
+
+                var CreateFromUser = CreateUserFromUser(user, userProfilePicture, userCoverPicture);
 
                 await _userCommandRepository.AddAsync(CreateFromUser);
+
 
                 var roles = await CreateRoleAndUserRole(user, cancellationToken);
 
@@ -96,6 +103,8 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
             catch (Exception ex)
             {
                 transaction.Rollback();
+                await _fileService.DeleteFileAsync(userProfilePicture);
+                await _fileService.DeleteFileAsync(userCoverPicture);
                 return ResponseDto<AuthenticationResultDto>.Fail(ex.Message, (int)ApiStatusCode.InternalServerError);
             }
         }
@@ -181,7 +190,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         return false;
     }
 
-    private User CreateUserFromUser(User user)
+    private User CreateUserFromUser(User user, string userProfilePicture, string userCoverPicture)
     {
         var userPasswordHash = _passwordService.HashPassword(user.PasswordHash);
         user.RefreshToken = string.Empty;
@@ -191,6 +200,8 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         user.Salt = userPasswordHash.Salt;
         user.CreatedByUserName = user.UserName;
         user.PasswordHash = userPasswordHash.PasswordHash;
+        user.PhotoPath = userProfilePicture;
+        user.CoverPhoto = userCoverPicture;
 
         return user;
     }

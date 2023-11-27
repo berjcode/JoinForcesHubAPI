@@ -1,4 +1,6 @@
-﻿namespace JoinForcesHubAPI.Application.Contracts.UserAuthentication;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace JoinForcesHubAPI.Application.Contracts.UserAuthentication;
 
 public record RegisterRequest(
     string FirstName,
@@ -7,7 +9,6 @@ public record RegisterRequest(
     string Email,
     string About,
     string PasswordHash,
-    string PhotoPath,
     string GithubLink,
     string LinkedlnLink,
     string StackOverFlowLink,
@@ -15,6 +16,7 @@ public record RegisterRequest(
     string EducationStatus,
     string JobStatus,
     bool IsProfileVisible,
-    string CoverPhoto,
-    bool IsPremium
+    bool IsPremium,
+    IFormFile UserProfilePicture,
+    IFormFile UserCoverPicture
     );
