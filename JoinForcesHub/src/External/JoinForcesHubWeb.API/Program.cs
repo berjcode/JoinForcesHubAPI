@@ -10,6 +10,10 @@ builder.Services
     .AddInfrastructureLayer(builder.Configuration);
 
 builder.Services.AddTransient<GlobalExceptionMiddleware>();
+builder.Services.AddCors(options => options.AddDefaultPolicy(options =>
+{
+    options.AllowAnyHeader().AllowAnyMethod().AAllowCredentials().SetIsOriginAllowed(options => true);
+}));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
