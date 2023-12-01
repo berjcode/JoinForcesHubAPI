@@ -12,7 +12,7 @@ builder.Services
 builder.Services.AddTransient<GlobalExceptionMiddleware>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(options =>
 {
-    options.AllowAnyHeader().AllowAnyMethod().AAllowCredentials().SetIsOriginAllowed(options => true);
+    options.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(options => true);
 }));
 
 builder.Services.AddControllers();

@@ -9,6 +9,7 @@ using JoinForcesHubAPI.Application.Abstractions;
 using JoinForcesHubAPI.Application.Utilities.Messages;
 using JoinForcesHubWeb.Application.Utilities.Messages;
 using JoinForcesHubAPI.Application.Services.UserRoles;
+using JoinForcesHubAPI.Application.Utilities.Constants;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
 using JoinForcesHubAPI.Application.Contracts.UserAuthentication;
@@ -71,8 +72,8 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
 
         using (var transaction = await _dbContextService.BeginTransactionAsync(cancellationToken))
         {
-            var userCoverPicture = await _fileService.UploadFileAsync(registerRequest.UserCoverPicture, "Images", "User");
-            var userProfilePicture = await _fileService.UploadFileAsync(registerRequest.UserProfilePicture, "Images", "User");
+            var userCoverPicture = await _fileService.UploadFileAsync(registerRequest.UserCoverPicture, ServiceConstants.Images, ServiceConstants.Users);
+            var userProfilePicture = await _fileService.UploadFileAsync(registerRequest.UserProfilePicture, ServiceConstants.Images, ServiceConstants.Users);
 
             try
             {
@@ -105,6 +106,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
                 transaction.Rollback();
                 await _fileService.DeleteFileAsync(userProfilePicture);
                 await _fileService.DeleteFileAsync(userCoverPicture);
+                ServiceExceptionMessages.HandleException(ex);
                 return ResponseDto<AuthenticationResultDto>.Fail(ex.Message, (int)ApiStatusCode.InternalServerError);
             }
         }
@@ -157,12 +159,14 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         var user = await _userQueryRepository.GetUserByEmail(loginRequest.Email);
 
         if (user == null)
-            throw new Exception(ServiceExceptionMessages.ThisUserNotRegister);
+            ServiceExceptionMessages.HandleException(ServiceExceptionMessages.ThisUserNotRegister);
+    
 
         var isPasswordValid = _passwordService.VerifyPassword(loginRequest.Password, user.Salt, user.PasswordHash);
 
         if (!isPasswordValid)
-            throw new Exception(ServiceExceptionMessages.InvalidPassword);
+            ServiceExceptionMessages.HandleException(ServiceExceptionMessages.InvalidPassword);
+     
 
         if (user.RefreshTokenEndData < _dateTimeProvider.NowTime)
             await UpdateRefreshToken(string.Empty, default, (int)RefreshTokenTime.Zero, user.Id);

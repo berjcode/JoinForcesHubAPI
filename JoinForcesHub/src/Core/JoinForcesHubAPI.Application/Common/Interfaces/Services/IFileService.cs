@@ -1,6 +1,4 @@
-﻿using JoinForcesHubAPI.Application.Contracts.CustomResponseDto;
-using Microsoft.AspNetCore.Http;
-using System.IO;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace JoinForcesHubAPI.Application.Common.Interfaces.Services;
 

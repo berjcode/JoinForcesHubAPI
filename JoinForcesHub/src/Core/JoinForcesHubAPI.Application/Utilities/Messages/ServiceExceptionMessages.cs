@@ -10,5 +10,17 @@ public static class ServiceExceptionMessages
 
     // Role
     public static string  RoleAlreadyRegistered="This Role is already registered";
+    // File
+    public static string FileNotBeEmpty = "file cannot be empty";
 
+
+    //Methods
+    public static void HandleException(Exception ex)
+    {
+        throw new Exception($"An Error Encountered  : {ex.Message}",ex);
+    }
+    public static void HandleException(string errorMessage)
+    {
+        throw new Exception($"An Error Encountered  : {errorMessage}");
+    }
 }

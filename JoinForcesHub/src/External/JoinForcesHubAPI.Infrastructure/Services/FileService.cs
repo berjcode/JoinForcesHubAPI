@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Text.RegularExpressions;
+using JoinForcesHubAPI.Application.Utilities.Messages;
+using JoinForcesHubAPI.Application.Utilities.Constants;
 using JoinForcesHubAPI.Application.Common.Interfaces.Services;
 
 namespace JoinForcesHubAPI.Infrastructure.Services;
@@ -10,7 +12,7 @@ public class FileService : IFileService
     public async Task<string> UploadFileAsync(IFormFile file, string fileType, string FolderName)
     {
         if (file == null || file.Length == 0)
-             throw new Exception("Not Empty");
+            ServiceExceptionMessages.HandleException(ServiceExceptionMessages.FileNotBeEmpty);
 
         try
         {
@@ -35,7 +37,8 @@ public class FileService : IFileService
         }
         catch (Exception ex)
         {
-            throw new Exception($"Hata İle Karşılaşıldı: {ex.Message}", ex);
+            ServiceExceptionMessages.HandleException(ex);
+            throw;
         }
     }
 
@@ -46,9 +49,9 @@ public class FileService : IFileService
 
         if (!File.Exists(pathFile))
         {
-            string defaultImagePath = "./Content/Images/defaultphoto.png";
+            string defaultImagePath = ServiceConstants.DefaultImagePath;
             byte[] defaultImageBytes = await File.ReadAllBytesAsync(defaultImagePath);
-            string defaultImageMimeType = GetMimeType("defaultphoto.png");
+            string defaultImageMimeType = GetMimeType(ServiceConstants.DefaultImageName);
 
             return (defaultImageBytes, defaultImageMimeType);
         }
@@ -101,7 +104,8 @@ public class FileService : IFileService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Dosya silme hatası: {ex.Message}");
+            ServiceExceptionMessages.HandleException(ex);
+            throw;
         }
 
         return Task.CompletedTask;
