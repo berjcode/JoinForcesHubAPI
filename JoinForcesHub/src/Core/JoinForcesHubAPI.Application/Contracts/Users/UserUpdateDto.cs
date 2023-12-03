@@ -14,6 +14,7 @@ public record UserUpdateDto(
     string LinkedlnLink,
     string StackOverFlowLink,
     string Location,
+      string UserJobTitle,
     string EducationStatus,
     string JobStatus,
     bool IsProfileVisible,

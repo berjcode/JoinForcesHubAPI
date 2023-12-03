@@ -6,6 +6,7 @@ public record UserCreateDto(
     string UserName,
     string Email,
     string About,
+    string UserJobTitle,
     string Password,
     string PhotoPath,
     string GithubLink,

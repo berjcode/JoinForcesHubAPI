@@ -6,6 +6,7 @@ public record RegisterRequest(
     string FirstName,
     string SurName,
     string UserName,
+    string UserJobTitle,
     string Email,
     string About,
     string PasswordHash,

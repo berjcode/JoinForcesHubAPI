@@ -97,7 +97,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
                 await _dbContextService.SaveChangesAsync(cancellationToken);
 
                 var tokenRegister = _jwtTokenGenerator.GenerateToken(user.Id, user.FirstName, user.SurName, roles);
-                var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration, default);
+                var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, tokenRegister.AccessToken, tokenRegister.AccessTokenExpiration,user.PhotoPath,user.CoverPhoto,user.UserJobTitle, default);
                 transaction.Commit();
                 return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Create, ApiMessages.RegisterSuccess);
             }
@@ -179,7 +179,7 @@ public class AuthenticationService : BaseService<User>, IAuthenticationService
         if (user.RefreshToken.Length == 0 && user.RefreshTokenEndData == null)
             await UpdateRefreshToken(token.RefreshToken, token.RefreshTokenExpiration, (int)RefreshTokenTime.Twenty, user.Id);
 
-        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token.AccessToken, token.AccessTokenExpiration, user.RefreshToken);
+        var authResult = new AuthenticationResultDto(user.Id, user.FirstName, user.SurName, user.Email, token.AccessToken, token.AccessTokenExpiration,  user.RefreshToken, user.PhotoPath, user.CoverPhoto,user.UserJobTitle);
 
         return ResponseDto<AuthenticationResultDto>.Success(authResult, (int)ApiStatusCode.Success, ApiMessages.LoginSuccessful);
     }

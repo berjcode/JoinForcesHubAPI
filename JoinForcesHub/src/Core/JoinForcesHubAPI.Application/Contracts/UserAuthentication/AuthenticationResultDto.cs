@@ -7,6 +7,9 @@ string SurName,
 string Email,
 string Token,
 DateTime AccessTokenExpiration,
-string RefreshToken
+string RefreshToken,
+string PhotoPath,
+string CoverPhoto,
+string UserJobTitle
 );
 

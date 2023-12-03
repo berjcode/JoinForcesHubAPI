@@ -7,6 +7,7 @@ public class User : BaseEntity
 {
     public string FirstName { get; set; } = null!;
     public string SurName { get; set; } = null!;
+    public string UserJobTitle { get; set; } = null!;
     public string UserName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string About { get; set; }

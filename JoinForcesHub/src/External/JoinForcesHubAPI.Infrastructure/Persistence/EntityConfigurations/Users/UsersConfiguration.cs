@@ -31,6 +31,7 @@ public sealed class UsersConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.FirstName).HasColumnType(nvarcharFiftySevenExpressionOption).IsRequired();
         builder.Property(u => u.About).HasColumnType(nvarcharFiveHundredExpressionOption).IsRequired(false);
         builder.Property(u => u.EducationStatus).HasColumnType(nvarcharFifteenExpressionOption).IsRequired();
+        builder.Property(u => u.UserJobTitle).HasColumnType(nvarcharFifteenExpressionOption).IsRequired(true);
         builder.Property(u => u.GithubLink).HasColumnType(nvarcharThreeHundredExpressionOption).IsRequired(false);
         builder.Property(u => u.LinkedlnLink).HasColumnType(nvarcharThreeHundredExpressionOption).IsRequired(false);
         builder.Property(u => u.StackOverFlowLink).HasColumnType(nvarcharThreeHundredExpressionOption).IsRequired(false);

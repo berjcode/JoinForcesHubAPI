@@ -6,6 +6,7 @@ public record UserListDto(
     string SurName,
     string UserName,
     string Email,
+    string UserJobTitle,
     string About,
     string Password,
     string PhotoPath,
